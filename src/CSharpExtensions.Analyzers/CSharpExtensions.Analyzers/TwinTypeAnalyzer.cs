@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CSharpExtensions.Analyzers
 {
     //TODO: Add option for ignoring properties types
-    //TODO: Add option for ignoring given properties
     //TODO: Add CodeFix for adding missing properties
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class TwinTypeAnalyzer : DiagnosticAnalyzer
@@ -29,12 +28,12 @@ namespace CSharpExtensions.Analyzers
                 foreach (var twinType in ReadonlyClassHelper.GetTwinTypes(namedType))
                 {
                     var ownProperties = GetProperties(namedType);
-                    var twinProperties = GetProperties(twinType);
+                    var twinProperties = GetProperties(twinType.Type).Except(twinType.IgnoredMembers);
                     var missingProperties = twinProperties.Except(ownProperties);
                     if (missingProperties.IsEmpty == false)
                     {
                         var propertiesString = string.Join(", ", missingProperties);
-                        var diagnostic = Diagnostic.Create(Rule, context.Symbol.Locations[0], twinType.ToDisplayString(), propertiesString);
+                        var diagnostic = Diagnostic.Create(Rule, context.Symbol.Locations[0], twinType.Type.ToDisplayString(), propertiesString);
                         context.ReportDiagnostic(diagnostic);
                     }
                 }
