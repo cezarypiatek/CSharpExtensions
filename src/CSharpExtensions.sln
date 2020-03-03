@@ -3,13 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions.Analyzers", "CSharpExtensions.Analyzers\CSharpExtensions.Analyzers\CSharpExtensions.Analyzers.csproj", "{ADBBE6EC-9AB0-4CA6-97E8-53E2ADA08515}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions.Analyzers", "CSharpExtensions.Analyzers\CSharpExtensions.Analyzers.csproj", "{ADBBE6EC-9AB0-4CA6-97E8-53E2ADA08515}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions.Analyzers.Test", "CSharpExtensions.Analyzers\CSharpExtensions.Analyzers.Test\CSharpExtensions.Analyzers.Test.csproj", "{A9C8D18F-8D59-4C52-A83D-2E578497AD33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions.Analyzers.Test", "CSharpExtensions.Analyzers.Test\CSharpExtensions.Analyzers.Test.csproj", "{A9C8D18F-8D59-4C52-A83D-2E578497AD33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpExtensions.Analyzers.Vsix", "CSharpExtensions.Analyzers\CSharpExtensions.Analyzers.Vsix\CSharpExtensions.Analyzers.Vsix.csproj", "{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions.Annotations", "CSharpExtensions.Annotations\CSharpExtensions.Annotations.csproj", "{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ADBBE6EC-9AB0-4CA6-97E8-53E2ADA08515} = {ADBBE6EC-9AB0-4CA6-97E8-53E2ADA08515}
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions.Annotations", "CSharpExtensions.Analyzers\CSharpExtensions.Annotations\CSharpExtensions.Annotations.csproj", "{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpExtensions.Analyzers.Vsix", "CSharpExtensions.Analyzers.Vsix\CSharpExtensions.Analyzers.Vsix.csproj", "{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +28,14 @@ Global
 		{A9C8D18F-8D59-4C52-A83D-2E578497AD33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9C8D18F-8D59-4C52-A83D-2E578497AD33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9C8D18F-8D59-4C52-A83D-2E578497AD33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

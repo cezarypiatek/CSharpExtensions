@@ -7,7 +7,6 @@ namespace CSharpExtensions.Annotations
         public string[] IgnoredMembers { get; set; }
         public TwinTypeAttribute(Type type)
         {
-
         }
     }
 }

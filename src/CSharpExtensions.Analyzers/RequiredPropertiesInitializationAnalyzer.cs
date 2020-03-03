@@ -30,7 +30,7 @@ namespace CSharpExtensions.Analyzers
 
             if (typeInfo.Symbol is ITypeSymbol type)
             {
-                var membersForInitialization = GetMembersForRequiredInitialization(type).Select(x => x.Name).ToImmutableHashSet();
+                var membersForInitialization = GetMembersForRequiredInitialization(type, objectCreation).Select(x => x.Name).ToImmutableHashSet();
                 if (membersForInitialization.IsEmpty)
                 {
                     return;
@@ -49,10 +49,10 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private static IEnumerable<ISymbol> GetMembersForRequiredInitialization(ITypeSymbol type)
+        private static IEnumerable<ISymbol> GetMembersForRequiredInitialization(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation)
         {
             var members = type.GetMembers().Where(x => x is IPropertySymbol property && property.SetMethod != null);
-            if (IsFullInitRequired(type))
+            if (IsFullInitRequired(type, objectCreation))
             {
                 return members;
             }
@@ -70,8 +70,16 @@ namespace CSharpExtensions.Analyzers
                 .OfType<IdentifierNameSyntax>().Select(x => x.Identifier.Text).ToImmutableHashSet();
         }
 
-        private static bool IsFullInitRequired(ITypeSymbol type)
+        private static bool IsFullInitRequired(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation)
         {
+
+            if (objectCreation.HasLeadingTrivia)
+            {
+                if (objectCreation.NewKeyword.LeadingTrivia.Any(x => x.Kind() == SyntaxKind.MultiLineCommentTrivia && x.ToFullString().Contains("FullInitRequired")))
+                {
+                    return true;
+                }
+            }
             return ReadonlyClassHelper.IsMarkedWithReadonly(type) || ReadonlyClassHelper.IsMarkedWithFullInitRequired(type);
         }
     }
