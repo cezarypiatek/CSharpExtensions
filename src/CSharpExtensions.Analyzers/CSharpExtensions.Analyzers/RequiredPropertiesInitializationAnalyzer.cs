@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -12,7 +13,7 @@ namespace CSharpExtensions.Analyzers
     {
         public const string DiagnosticId = "CSE001";
 
-        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, "Required properties initialization", "Missing initialization for properties: {0}", "CSharp Extensions", DiagnosticSeverity.Error, isEnabledByDefault: true);
+        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, "Required properties initialization", "Missing initialization for properties:\r\n{0}", "CSharp Extensions", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -29,27 +30,49 @@ namespace CSharpExtensions.Analyzers
 
             if (typeInfo.Symbol is ITypeSymbol type)
             {
-                var properties = type.GetMembers().Where(x=>x is IPropertySymbol property && property.SetMethod != null).Select(x=>x.Name).ToImmutableHashSet();
-                if (properties.IsEmpty)
+                var membersForInitialization = GetMembersForRequiredInitialization(type).Select(x => x.Name).ToImmutableHashSet();
+                if (membersForInitialization.IsEmpty)
                 {
                     return;
                 }
 
-                if (ReadonlyClassHelper.IsMarkedAsReadonly(type))
-                {
-                    var objectInitialization = objectCreation.Initializer;
-                    var initializedProperties = objectInitialization.Expressions.OfType<AssignmentExpressionSyntax>().Select(x => x.Left)
-                        .OfType<IdentifierNameSyntax>().Select(x => x.Identifier.Text).ToImmutableHashSet();
+                var objectInitialization = objectCreation.Initializer;
+                var alreadyInitializedMembers = GetAlreadyInitializedMembers(objectInitialization);
 
-                    var missingProperties = properties.Except(initializedProperties);
-                    if (missingProperties.IsEmpty == false)
-                    {
-                        var propertiesString = string.Join(", ", missingProperties);
-                        var diagnostic = Diagnostic.Create(Rule, objectInitialization.GetLocation(), propertiesString);
-                        context.ReportDiagnostic(diagnostic);
-                    }
+                var missingMembers = membersForInitialization.Except(alreadyInitializedMembers);
+                if (missingMembers.IsEmpty == false)
+                {
+                    var missingMembersList = string.Join("\r\n", missingMembers.Select(x => $"- {x}"));
+                    var diagnostic = Diagnostic.Create(Rule, objectCreation.GetLocation(), missingMembersList);
+                    context.ReportDiagnostic(diagnostic);
                 }
             }
+        }
+
+        private static IEnumerable<ISymbol> GetMembersForRequiredInitialization(ITypeSymbol type)
+        {
+            var members = type.GetMembers().Where(x => x is IPropertySymbol property && property.SetMethod != null);
+            if (IsFullInitRequired(type))
+            {
+                return members;
+            }
+            return members.Where(x=> ReadonlyClassHelper.IsMarkedWithAttribute(x, "InitRequiredAttribute"));
+        }
+
+        private static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
+        {
+            if (objectInitialization?.Expressions == null)
+            {
+                return ImmutableHashSet<string>.Empty;
+            }
+
+            return objectInitialization.Expressions.OfType<AssignmentExpressionSyntax>().Select(x => x.Left)
+                .OfType<IdentifierNameSyntax>().Select(x => x.Identifier.Text).ToImmutableHashSet();
+        }
+
+        private static bool IsFullInitRequired(ITypeSymbol type)
+        {
+            return ReadonlyClassHelper.IsMarkedWithReadonly(type) || ReadonlyClassHelper.IsMarkedWithFullInitRequired(type);
         }
     }
 }

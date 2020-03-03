@@ -7,11 +7,15 @@ namespace CSharpExtensions.Analyzers
 {
     public static class ReadonlyClassHelper
     {
-        public static bool IsMarkedAsReadonly(ITypeSymbol type)
+        public static bool IsMarkedWithReadonly(ISymbol type) => IsMarkedWithAttribute(type, "ReadonlyAttribute");
+
+        public static bool IsMarkedWithFullInitRequired(ISymbol type) => IsMarkedWithAttribute(type, "FullInitRequiredAttribute");
+
+        public static bool IsMarkedWithAttribute(ISymbol type, string attributeName)
         {
-            return type.GetAttributes().Any(x => x.AttributeClass.Name == "ReadonlyAttribute");
+            return type.GetAttributes().Any(x => x.AttributeClass.Name == attributeName);
         }
-        
+
         public static IEnumerable<TwinTypeInfo> GetTwinTypes(ITypeSymbol type)
         {
             foreach(var twinAttribute in type.GetAttributes().Where(x => x.AttributeClass.Name == "TwinTypeAttribute"))

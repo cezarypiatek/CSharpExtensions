@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\CSharpExtensions.Analyzers\bin\$(Configuration)\netstandard1.3\CSharpExtensions.Analyzers.dll">
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>analyzers\dotnet\cs</PackagePath>
+    </None>
+  </ItemGroup>
+</Project>

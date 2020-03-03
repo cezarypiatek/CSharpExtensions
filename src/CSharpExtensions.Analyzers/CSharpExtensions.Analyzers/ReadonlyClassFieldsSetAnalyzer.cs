@@ -28,7 +28,7 @@ namespace CSharpExtensions.Analyzers
             {
                
                 var typeInfo = context.SemanticModel.GetSymbolInfo(memberAccess.Expression);
-                if (typeInfo.Symbol is ITypeSymbol type && ReadonlyClassHelper.IsMarkedAsReadonly(type))
+                if (typeInfo.Symbol is ITypeSymbol type && ReadonlyClassHelper.IsMarkedWithReadonly(type))
                 {
                     var diagnostic = Diagnostic.Create(Rule, assignment.GetLocation());
                     context.ReportDiagnostic(diagnostic);
