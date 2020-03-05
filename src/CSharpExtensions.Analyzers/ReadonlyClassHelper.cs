@@ -13,7 +13,8 @@ namespace CSharpExtensions.Analyzers
 
         public static bool IsMarkedWithAttribute(ISymbol type, string attributeName)
         {
-            return type.GetAttributes().Any(x => x.AttributeClass.Name == attributeName);
+            var fullAttributeName = $"SmartAnalyzers.CSharpExtensions.Annotations.{attributeName}";
+            return type.GetAttributes().Any(x =>  x.AttributeClass.Name == attributeName && x.AttributeClass.ToDisplayString() == fullAttributeName);
         }
 
         public static IEnumerable<TwinTypeInfo> GetTwinTypes(ITypeSymbol type)
