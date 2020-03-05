@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -33,7 +34,17 @@ namespace CSharpExtensions.Analyzers
                 var membersForInitialization = GetMembersForRequiredInitialization(type, objectCreation).Select(x => x.Name).ToImmutableHashSet();
                 if (membersForInitialization.IsEmpty)
                 {
-                    return;
+                    var annotatedParent = FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(objectCreation.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
+                    if (annotatedParent is null)
+                    {
+                        return;
+                    }
+
+                    membersForInitialization = GetAllMembersThatCanBeInitialized(type).Select(x => x.Name).ToImmutableHashSet();
+                    if (membersForInitialization.IsEmpty)
+                    {
+                        return;
+                    }
                 }
 
                 var objectInitialization = objectCreation.Initializer;
@@ -49,14 +60,38 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
+        public static TExpected FindNearestContainer<TExpected, TStop>(SyntaxNode tokenParent, Func<TExpected, bool> test) where TExpected : SyntaxNode where TStop : SyntaxNode
+        {
+            if (tokenParent is TExpected t1 && test(t1))
+            {
+                return t1;
+            }
+
+            if (tokenParent is TStop || tokenParent.Parent == null)
+            {
+                return null;
+            }
+            
+            return FindNearestContainer<TExpected, TStop>(tokenParent.Parent, test);
+        }
+
         private static IEnumerable<ISymbol> GetMembersForRequiredInitialization(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation)
         {
-            var members = type.GetMembers().Where(x => x is IPropertySymbol property && property.SetMethod != null);
+            var members = GetAllMembersThatCanBeInitialized(type);
             if (IsFullInitRequired(type, objectCreation))
             {
                 return members;
             }
             return members.Where(x=> ReadonlyClassHelper.IsMarkedWithAttribute(x, "InitRequiredAttribute"));
+        }
+
+        private static IEnumerable<ISymbol> GetAllMembersThatCanBeInitialized(ITypeSymbol type)
+        {
+            
+            return type.GetMembers().Where(x => x is IPropertySymbol property && 
+                                                property.SetMethod != null && 
+                                                property.IsIndexer == false && 
+                                                property.ExplicitInterfaceImplementations.IsEmpty);
         }
 
         private static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
