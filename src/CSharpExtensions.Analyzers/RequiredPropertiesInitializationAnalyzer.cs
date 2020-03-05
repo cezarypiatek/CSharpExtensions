@@ -72,15 +72,31 @@ namespace CSharpExtensions.Analyzers
 
         private static bool IsFullInitRequired(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation)
         {
+            return IsMarkedWithComment(objectCreation, "FullInitRequired") || 
+                   ReadonlyClassHelper.IsMarkedWithReadonly(type) || 
+                   ReadonlyClassHelper.IsMarkedWithFullInitRequired(type);
+        }
 
-            if (objectCreation.HasLeadingTrivia)
+        private static bool IsMarkedWithComment(ObjectCreationExpressionSyntax objectCreation, string marker)
+        {
+            var trivia = GetTriviaBefore(objectCreation);
+            return trivia.Count > 0 && trivia.Any(x => x.Kind() == SyntaxKind.MultiLineCommentTrivia && x.ToFullString().Contains(marker));
+        }
+
+        private static SyntaxTriviaList GetTriviaBefore(ObjectCreationExpressionSyntax objectCreation)
+        {
+
+            if (objectCreation.NewKeyword.HasLeadingTrivia)
             {
-                if (objectCreation.NewKeyword.LeadingTrivia.Any(x => x.Kind() == SyntaxKind.MultiLineCommentTrivia && x.ToFullString().Contains("FullInitRequired")))
-                {
-                    return true;
-                }
+                return objectCreation.NewKeyword.LeadingTrivia;
             }
-            return ReadonlyClassHelper.IsMarkedWithReadonly(type) || ReadonlyClassHelper.IsMarkedWithFullInitRequired(type);
+
+            var prevToken = objectCreation.NewKeyword.GetPreviousToken();
+            if (prevToken.HasTrailingTrivia)
+            {
+                return prevToken.TrailingTrivia;
+            }
+            return SyntaxTriviaList.Empty;
         }
     }
 }
