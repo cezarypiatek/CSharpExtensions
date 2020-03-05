@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSharpExtensions.Annotations
+namespace SmartAnalyzers.CSharpExtensions.Annotations
 {
     public sealed class InitRequiredAttribute : Attribute { }
 }

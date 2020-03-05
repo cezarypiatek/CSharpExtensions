@@ -4,6 +4,23 @@
     <TargetFramework>netstandard1.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>SmartAnalyzers.CSharpExtensions.Annotations</PackageId>
+    <PackageVersion>1.0.0.0</PackageVersion>
+    <Authors>Cezary Piątek</Authors>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/cezarypiatek/CSharpExtensions</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/cezarypiatek/CSharpExtensions/raw/master/doc/logo.jpg</PackageIconUrl>
+    <RepositoryUrl>https://github.com/cezarypiatek/CSharpExtensions</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>A set of annotations and analyzers that add additional constraints to your codebase</Description>
+    <Copyright>Copyright</Copyright>
+    <PackageTags>CSharpExtensions.Analyzers, analyzers</PackageTags>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <AssemblyName>CSharpExtensions.Annotations</AssemblyName>
+    <RootNamespace>SmartAnalyzers.CSharpExtensions.Annotations</RootNamespace>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\CSharpExtensions.Analyzers\bin\$(Configuration)\netstandard1.3\CSharpExtensions.Analyzers.dll">
       <Visible>false</Visible>
