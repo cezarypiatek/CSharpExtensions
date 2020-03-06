@@ -88,10 +88,36 @@ namespace CSharpExtensions.Analyzers
         private static IEnumerable<ISymbol> GetAllMembersThatCanBeInitialized(ITypeSymbol type)
         {
             
-            return type.GetMembers().Where(x => x is IPropertySymbol property && 
+            return GetBaseTypesAndThis(type).SelectMany(x=> x.GetMembers()).Where(x => x is IPropertySymbol property && 
                                                 property.SetMethod != null && 
                                                 property.IsIndexer == false && 
                                                 property.ExplicitInterfaceImplementations.IsEmpty);
+        }
+
+        private static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
+        {
+            foreach (var unwrapped in UnwrapGeneric(type))
+            {
+                var current = unwrapped;
+                while (current != null && IsSystemObject(current) == false)
+                {
+                    yield return current;
+                    current = current.BaseType;
+                }
+            }
+        }
+        private static IEnumerable<ITypeSymbol> UnwrapGeneric(ITypeSymbol typeSymbol)
+        {
+            if (typeSymbol.TypeKind == TypeKind.TypeParameter && typeSymbol is ITypeParameterSymbol namedType && namedType.Kind != SymbolKind.ErrorType)
+            {
+                return namedType.ConstraintTypes;
+            }
+            return new[] { typeSymbol };
+        }
+
+        private static bool IsSystemObject(ITypeSymbol current)
+        {
+            return current.Name == "Object" && current.ContainingNamespace.Name == "System";
         }
 
         private static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
