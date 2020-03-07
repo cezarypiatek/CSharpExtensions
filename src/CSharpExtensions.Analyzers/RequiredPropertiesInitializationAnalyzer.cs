@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -9,24 +8,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CSharpExtensions.Analyzers
 {
-    public class SyntaxHelper
-    {
-        public static TExpected FindNearestContainer<TExpected, TStop>(SyntaxNode tokenParent, Func<TExpected, bool> test) where TExpected : SyntaxNode where TStop : SyntaxNode
-        {
-            if (tokenParent is TExpected t1 && test(t1))
-            {
-                return t1;
-            }
-
-            if (tokenParent is TStop || tokenParent.Parent == null)
-            {
-                return null;
-            }
-            
-            return FindNearestContainer<TExpected, TStop>(tokenParent.Parent, test);
-        }
-    }
-
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class RequiredPropertiesInitializationAnalyzer : DiagnosticAnalyzer
     {
@@ -45,7 +26,7 @@ namespace CSharpExtensions.Analyzers
         private void AnalyzeObjectInitSyntax(SyntaxNodeAnalysisContext context)
         {
             var initializer = (InitializerExpressionSyntax)context.Node;
-            if (initializer.Parent is AssignmentExpressionSyntax assignment)
+            if (initializer.Parent is AssignmentExpressionSyntax assignment && assignment.Left != null)
             {
 
                 var annotatedParent = SyntaxHelper.FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(initializer.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));

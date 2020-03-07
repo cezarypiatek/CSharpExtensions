@@ -23,21 +23,21 @@ namespace CSharpExtensions.Analyzers
         private void AnalyzeSyntax(SyntaxNodeAnalysisContext context)
         {
             var assignment = (AssignmentExpressionSyntax)context.Node;
-            if (assignment.Parent is InitializerExpressionSyntax)
+            if (assignment.Parent is InitializerExpressionSyntax || assignment.Left == null)
             {
                 return;
             }
 
             var memberSymbol = context.SemanticModel.GetSymbolInfo(assignment.Left).Symbol;
-            if (memberSymbol != null && (memberSymbol is IPropertySymbol || memberSymbol is IFieldSymbol))
+            if (memberSymbol is IPropertySymbol || memberSymbol is IFieldSymbol)
             {
                 if (ReadonlyClassHelper.IsMarkedWithReadonly(memberSymbol.ContainingType))
                 {
-                    var parentConstructor = SyntaxHelper.FindNearestContainer<ConstructorDeclarationSyntax, TypeDeclarationSyntax>(assignment.Parent, syntax => true);
-                    if (parentConstructor != null)
+                    var parentMethod = SyntaxHelper.FindNearestContainer<BaseMethodDeclarationSyntax>(assignment.Parent);
+                    if (parentMethod is ConstructorDeclarationSyntax)
                     {
-                        var constructorSymbol = context.SemanticModel.GetDeclaredSymbol(parentConstructor);
-                        if (constructorSymbol != null && constructorSymbol.ContainingSymbol == memberSymbol.ContainingSymbol)
+                        var constructorSymbol = context.SemanticModel.GetDeclaredSymbol(parentMethod);
+                        if (constructorSymbol != null && constructorSymbol.ContainingType == memberSymbol.ContainingType)
                         {
                             return;
                         }
