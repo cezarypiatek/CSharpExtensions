@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CSharpExtensions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ReadonlyClassFieldsSetAnalyzer : DiagnosticAnalyzer
+    public class ReadonlyTypeFieldsSetAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "CSE002";
 
@@ -23,13 +23,25 @@ namespace CSharpExtensions.Analyzers
         private void AnalyzeSyntax(SyntaxNodeAnalysisContext context)
         {
             var assignment = (AssignmentExpressionSyntax)context.Node;
-
-            if (assignment.Left is MemberAccessExpressionSyntax memberAccess)
+            if (assignment.Parent is InitializerExpressionSyntax)
             {
-               
-                var typeInfo = context.SemanticModel.GetSymbolInfo(memberAccess.Expression);
-                if (typeInfo.Symbol is ITypeSymbol type && ReadonlyClassHelper.IsMarkedWithReadonly(type))
+                return;
+            }
+
+            var memberSymbol = context.SemanticModel.GetSymbolInfo(assignment.Left).Symbol;
+            if (memberSymbol != null && (memberSymbol is IPropertySymbol || memberSymbol is IFieldSymbol))
+            {
+                if (ReadonlyClassHelper.IsMarkedWithReadonly(memberSymbol.ContainingType))
                 {
+                    var parentConstructor = SyntaxHelper.FindNearestContainer<ConstructorDeclarationSyntax, TypeDeclarationSyntax>(assignment.Parent, syntax => true);
+                    if (parentConstructor != null)
+                    {
+                        var constructorSymbol = context.SemanticModel.GetDeclaredSymbol(parentConstructor);
+                        if (constructorSymbol != null && constructorSymbol.ContainingSymbol == memberSymbol.ContainingSymbol)
+                        {
+                            return;
+                        }
+                    }
                     var diagnostic = Diagnostic.Create(Rule, assignment.GetLocation());
                     context.ReportDiagnostic(diagnostic);
                 }

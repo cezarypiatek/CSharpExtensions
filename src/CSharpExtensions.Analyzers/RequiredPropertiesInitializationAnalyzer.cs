@@ -9,6 +9,24 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CSharpExtensions.Analyzers
 {
+    public class SyntaxHelper
+    {
+        public static TExpected FindNearestContainer<TExpected, TStop>(SyntaxNode tokenParent, Func<TExpected, bool> test) where TExpected : SyntaxNode where TStop : SyntaxNode
+        {
+            if (tokenParent is TExpected t1 && test(t1))
+            {
+                return t1;
+            }
+
+            if (tokenParent is TStop || tokenParent.Parent == null)
+            {
+                return null;
+            }
+            
+            return FindNearestContainer<TExpected, TStop>(tokenParent.Parent, test);
+        }
+    }
+
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class RequiredPropertiesInitializationAnalyzer : DiagnosticAnalyzer
     {
@@ -16,7 +34,7 @@ namespace CSharpExtensions.Analyzers
 
         private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, "Required properties initialization", "Missing initialization for properties:\r\n{0}", "CSharp Extensions", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RequiredPropertiesInitializationAnalyzer.Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -30,7 +48,7 @@ namespace CSharpExtensions.Analyzers
             if (initializer.Parent is AssignmentExpressionSyntax assignment)
             {
 
-                var annotatedParent = FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(initializer.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
+                var annotatedParent = SyntaxHelper.FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(initializer.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
                 if (annotatedParent is null)
                 {
                     return;
@@ -62,7 +80,7 @@ namespace CSharpExtensions.Analyzers
                 var membersForInitialization = GetMembersForRequiredInitialization(type, objectCreation, membersExtractor).Select(x => x.Name).ToImmutableHashSet();
                 if (membersForInitialization.IsEmpty)
                 {
-                    var annotatedParent = FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(objectCreation.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
+                    var annotatedParent = SyntaxHelper.FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(objectCreation.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
                     if (annotatedParent is null)
                     {
                         return;
@@ -89,24 +107,9 @@ namespace CSharpExtensions.Analyzers
             {
                 var missingMembersList = string.Join("\r\n", missingMembers.Select(x => $"- {x}"));
                 
-                var diagnostic = Diagnostic.Create(Rule, getLocation, missingMembersList);
+                var diagnostic = Diagnostic.Create(RequiredPropertiesInitializationAnalyzer.Rule, getLocation, missingMembersList);
                 context.ReportDiagnostic(diagnostic);
             }
-        }
-
-        private static TExpected FindNearestContainer<TExpected, TStop>(SyntaxNode tokenParent, Func<TExpected, bool> test) where TExpected : SyntaxNode where TStop : SyntaxNode
-        {
-            if (tokenParent is TExpected t1 && test(t1))
-            {
-                return t1;
-            }
-
-            if (tokenParent is TStop || tokenParent.Parent == null)
-            {
-                return null;
-            }
-            
-            return FindNearestContainer<TExpected, TStop>(tokenParent.Parent, test);
         }
 
         private static IEnumerable<ISymbol> GetMembersForRequiredInitialization(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation, MembersExtractor extractor)

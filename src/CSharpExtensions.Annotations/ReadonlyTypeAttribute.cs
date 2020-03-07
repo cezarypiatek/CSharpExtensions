@@ -3,5 +3,5 @@
 namespace SmartAnalyzers.CSharpExtensions.Annotations
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public sealed class ReadonlyAttribute : Attribute { }
+    public sealed class ReadonlyTypeAttribute : Attribute { }
 }

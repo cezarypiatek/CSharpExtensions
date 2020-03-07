@@ -7,7 +7,7 @@ namespace CSharpExtensions.Analyzers
 {
     public static class ReadonlyClassHelper
     {
-        public static bool IsMarkedWithReadonly(ISymbol type) => IsMarkedWithAttribute(type, "ReadonlyAttribute");
+        public static bool IsMarkedWithReadonly(ISymbol type) => IsMarkedWithAttribute(type, "ReadonlyTypeAttribute");
 
         public static bool IsMarkedWithFullInitRequired(ISymbol type) => IsMarkedWithAttribute(type, "FullInitRequiredAttribute");
 
