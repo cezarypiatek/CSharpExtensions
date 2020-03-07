@@ -53,7 +53,6 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization
         public void should_report_missing_properties_for_type_marked_with_full_init_required_comment_recursive_options()
         {
             this.HasDiagnostic(_006_MissingPropertiesFullInitRequiredCommentRecursive, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
-
         }
 
         [Test]
@@ -72,6 +71,25 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization
         public void should_not_report_explicitly_implemented_properties_as_missing()
         {
             this.NoDiagnosticAtLine(_009_DoNotReportMissingPropertiesImplementedExplicitly, RequiredPropertiesInitializationAnalyzer.DiagnosticId, 12);
+        }
+
+        [Test]
+        public void should_report_missing_properties_for_init_without_new_keyword_when_recursive_init_required()
+        {
+            this.HasDiagnostic(_010_MissingPropertiesFullInitRequiredCommentRecursiveWhenNoNewKeyword, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
+        }
+
+        [Test]
+        public void should_not_report_not_accessible_properties_as_missing()
+        {
+            this.NoDiagnosticAtLine(_011_MissingNotAccessibleProperties, RequiredPropertiesInitializationAnalyzer.DiagnosticId, 12);
+        }
+
+
+        [Test]
+        public void should_report_missing_fields_for_type_marked_with_full_init_required_attribute_when_empty_init_block()
+        {
+            this.HasDiagnostic(_012_MissingFieldsFullInitRequiredAttribute, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
         }
     }
 }

@@ -20,10 +20,37 @@ namespace CSharpExtensions.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeSyntax, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(AnalyzeObjectCreationSyntax, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(AnalyzeObjectInitSyntax, SyntaxKind.ObjectInitializerExpression);
         }
 
-        private void AnalyzeSyntax(SyntaxNodeAnalysisContext context)
+        private void AnalyzeObjectInitSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var initializer = (InitializerExpressionSyntax)context.Node;
+            if (initializer.Parent is AssignmentExpressionSyntax assignment)
+            {
+
+                var annotatedParent = FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(initializer.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
+                if (annotatedParent is null)
+                {
+                    return;
+                }
+                var membersExtractor = new MembersExtractor(context.SemanticModel, initializer);
+                var typeInfo = context.SemanticModel.GetTypeInfo(assignment.Left);
+                if (typeInfo.Type != null)
+                {
+                    var membersForInitialization = membersExtractor.GetAllMembersThatCanBeInitialized(typeInfo.Type).Select(x => x.Name).ToImmutableHashSet();
+                    if (membersForInitialization.IsEmpty)
+                    {
+                        return;
+                    }
+
+                    TryToReportMissingMembers(context, initializer, membersForInitialization, initializer.GetLocation());
+                }
+            }
+        }
+
+        private void AnalyzeObjectCreationSyntax(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
 
@@ -31,7 +58,8 @@ namespace CSharpExtensions.Analyzers
 
             if (typeInfo.Symbol is ITypeSymbol type)
             {
-                var membersForInitialization = GetMembersForRequiredInitialization(type, objectCreation).Select(x => x.Name).ToImmutableHashSet();
+                var membersExtractor = new MembersExtractor(context.SemanticModel, objectCreation);
+                var membersForInitialization = GetMembersForRequiredInitialization(type, objectCreation, membersExtractor).Select(x => x.Name).ToImmutableHashSet();
                 if (membersForInitialization.IsEmpty)
                 {
                     var annotatedParent = FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(objectCreation.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
@@ -40,27 +68,33 @@ namespace CSharpExtensions.Analyzers
                         return;
                     }
 
-                    membersForInitialization = GetAllMembersThatCanBeInitialized(type).Select(x => x.Name).ToImmutableHashSet();
+                    membersForInitialization = membersExtractor.GetAllMembersThatCanBeInitialized(type).Select(x => x.Name).ToImmutableHashSet();
                     if (membersForInitialization.IsEmpty)
                     {
                         return;
                     }
                 }
 
-                var objectInitialization = objectCreation.Initializer;
-                var alreadyInitializedMembers = GetAlreadyInitializedMembers(objectInitialization);
-
-                var missingMembers = membersForInitialization.Except(alreadyInitializedMembers);
-                if (missingMembers.IsEmpty == false)
-                {
-                    var missingMembersList = string.Join("\r\n", missingMembers.Select(x => $"- {x}"));
-                    var diagnostic = Diagnostic.Create(Rule, objectCreation.GetLocation(), missingMembersList);
-                    context.ReportDiagnostic(diagnostic);
-                }
+                TryToReportMissingMembers(context, objectCreation.Initializer, membersForInitialization, objectCreation.GetLocation());
             }
         }
 
-        public static TExpected FindNearestContainer<TExpected, TStop>(SyntaxNode tokenParent, Func<TExpected, bool> test) where TExpected : SyntaxNode where TStop : SyntaxNode
+        private static void TryToReportMissingMembers(SyntaxNodeAnalysisContext context,
+            InitializerExpressionSyntax initializer, ImmutableHashSet<string> membersForInitialization,
+            Location getLocation)
+        {
+            var alreadyInitializedMembers = GetAlreadyInitializedMembers(initializer);
+            var missingMembers = membersForInitialization.Except(alreadyInitializedMembers);
+            if (missingMembers.IsEmpty == false)
+            {
+                var missingMembersList = string.Join("\r\n", missingMembers.Select(x => $"- {x}"));
+                
+                var diagnostic = Diagnostic.Create(Rule, getLocation, missingMembersList);
+                context.ReportDiagnostic(diagnostic);
+            }
+        }
+
+        private static TExpected FindNearestContainer<TExpected, TStop>(SyntaxNode tokenParent, Func<TExpected, bool> test) where TExpected : SyntaxNode where TStop : SyntaxNode
         {
             if (tokenParent is TExpected t1 && test(t1))
             {
@@ -75,49 +109,14 @@ namespace CSharpExtensions.Analyzers
             return FindNearestContainer<TExpected, TStop>(tokenParent.Parent, test);
         }
 
-        private static IEnumerable<ISymbol> GetMembersForRequiredInitialization(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation)
+        private static IEnumerable<ISymbol> GetMembersForRequiredInitialization(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation, MembersExtractor extractor)
         {
-            var members = GetAllMembersThatCanBeInitialized(type);
+            var members = extractor.GetAllMembersThatCanBeInitialized(type);
             if (IsFullInitRequired(type, objectCreation))
             {
                 return members;
             }
             return members.Where(x=> ReadonlyClassHelper.IsMarkedWithAttribute(x, "InitRequiredAttribute"));
-        }
-
-        private static IEnumerable<ISymbol> GetAllMembersThatCanBeInitialized(ITypeSymbol type)
-        {
-            
-            return GetBaseTypesAndThis(type).SelectMany(x=> x.GetMembers()).Where(x => x is IPropertySymbol property && 
-                                                property.SetMethod != null && 
-                                                property.IsIndexer == false && 
-                                                property.ExplicitInterfaceImplementations.IsEmpty);
-        }
-
-        private static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
-        {
-            foreach (var unwrapped in UnwrapGeneric(type))
-            {
-                var current = unwrapped;
-                while (current != null && IsSystemObject(current) == false)
-                {
-                    yield return current;
-                    current = current.BaseType;
-                }
-            }
-        }
-        private static IEnumerable<ITypeSymbol> UnwrapGeneric(ITypeSymbol typeSymbol)
-        {
-            if (typeSymbol.TypeKind == TypeKind.TypeParameter && typeSymbol is ITypeParameterSymbol namedType && namedType.Kind != SymbolKind.ErrorType)
-            {
-                return namedType.ConstraintTypes;
-            }
-            return new[] { typeSymbol };
-        }
-
-        private static bool IsSystemObject(ITypeSymbol current)
-        {
-            return current.Name == "Object" && current.ContainingNamespace.Name == "System";
         }
 
         private static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)

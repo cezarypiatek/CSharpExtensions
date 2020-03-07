@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+    class Test
+    {
+        public void DoSomething()
+        {
+            var user = /*FullInitRequired:recursive*/ new UserDTO()
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Address = [|
+                {
+                    City = "Krakow"
+                }|]
+            };
+        }
+    }
+
+    public class UserDTO
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public AddressDTO Address { get; set; } = new AddressDTO();
+    }
+
+    public class AddressDTO
+    {
+        public string City { get; set; }
+        public string ZipCode { get; set; }
+        public string Street { get; set; }
+        public string FlatNo { get; set; }
+        public string BuildingNo { get; set; }
+    }
+}

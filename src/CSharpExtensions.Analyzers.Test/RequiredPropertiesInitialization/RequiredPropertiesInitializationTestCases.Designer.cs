@@ -221,13 +221,12 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
         ///    {
         ///        public void DoSomething()
         ///        {
-        ///            var user = /*FullInitRequired:recursive*/ [|new UserDTO|]()
+        ///            var user = /*FullInitRequired:recursive*/ new UserDTO()
         ///            {
         ///                FirstName = &quot;John&quot;,
         ///                LastName = &quot;Doe&quot;,
-        ///                Address = new AddressDTO
-        ///                {
-        ///       [rest of string was truncated]&quot;;.
+        ///                Age = 10,
+        ///                Address = [|new AddressDTO|] [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _006_MissingPropertiesFullInitRequiredCommentRecursive {
             get {
@@ -322,6 +321,94 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
         internal static string _009_DoNotReportMissingPropertiesImplementedExplicitly {
             get {
                 return ResourceManager.GetString("_009_DoNotReportMissingPropertiesImplementedExplicitly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = /*FullInitRequired:recursive*/ new UserDTO()
+        ///            {
+        ///                FirstName = &quot;John&quot;,
+        ///                LastName = &quot;Doe&quot;,
+        ///                Address = [|
+        ///                {
+        ///                    Ci [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _010_MissingPropertiesFullInitRequiredCommentRecursiveWhenNoNewKeyword {
+            get {
+                return ResourceManager.GetString("_010_MissingPropertiesFullInitRequiredCommentRecursiveWhenNoNewKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = new UserDTO()
+        ///            {
+        ///                FirstName = &quot;John&quot;,
+        ///                LastName = &quot;Doe&quot;
+        ///            };
+        ///        }
+        ///    }
+        ///
+        ///    [FullInitRequired]
+        ///    public class UserDTO
+        ///    {
+        ///        pu [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _011_MissingNotAccessibleProperties {
+            get {
+                return ResourceManager.GetString("_011_MissingNotAccessibleProperties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = [|new UserDTO|]()
+        ///            {
+        ///                FirstName = &quot;John&quot;,
+        ///                LastName = &quot;Doe&quot;
+        ///            };
+        ///        }
+        ///    }
+        ///
+        ///    [FullInitRequired]
+        ///    public class UserDTO
+        ///    {
+        ///       [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _012_MissingFieldsFullInitRequiredAttribute {
+            get {
+                return ResourceManager.GetString("_012_MissingFieldsFullInitRequiredAttribute", resourceCulture);
             }
         }
     }

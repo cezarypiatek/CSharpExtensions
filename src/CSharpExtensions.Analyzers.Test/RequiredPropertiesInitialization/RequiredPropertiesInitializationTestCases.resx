@@ -145,4 +145,13 @@
   <data name="_009_DoNotReportMissingPropertiesImplementedExplicitly" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\009_DoNotReportMissingPropertiesImplementedExplicitly.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_010_MissingPropertiesFullInitRequiredCommentRecursiveWhenNoNewKeyword" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\010_MissingPropertiesFullInitRequiredCommentRecursiveWhenNoNewKeyword.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_011_MissingNotAccessibleProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\011_MissingNotAccessibleProperties.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_012_MissingFieldsFullInitRequiredAttribute" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\012_MissingFieldsFullInitRequiredAttribute.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>
