@@ -19,6 +19,8 @@ namespace CSharpExtensions.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(AnalyzeObjectCreationSyntax, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeAction(AnalyzeObjectInitSyntax, SyntaxKind.ObjectInitializerExpression);
         }
@@ -78,7 +80,7 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private static void TryToReportMissingMembers(SyntaxNodeAnalysisContext context,
+        private static void  TryToReportMissingMembers(SyntaxNodeAnalysisContext context,
             InitializerExpressionSyntax initializer, ImmutableHashSet<string> membersForInitialization,
             Location getLocation)
         {
