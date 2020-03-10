@@ -47,10 +47,14 @@ namespace CSharpExtensions.Analyzers
                             case IPropertySymbol property:
                                 return property.SetMethod != null &&
                                        property.IsIndexer == false &&
+                                       property.IsStatic == false &&
+                                       property.IsReadOnly == false &&
                                        property.ExplicitInterfaceImplementations.IsEmpty &&
                                        IsSymbolAccessible(property.SetMethod);
                             case IFieldSymbol field:
-                                return IsSymbolAccessible(field);
+                                return field.IsReadOnly == false && 
+                                       field.IsStatic == false && 
+                                       IsSymbolAccessible(field);
                             default:
                                 return false;
                         }
