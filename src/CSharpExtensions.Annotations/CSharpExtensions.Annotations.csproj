@@ -22,7 +22,7 @@
     <RootNamespace>SmartAnalyzers.CSharpExtensions.Annotations</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\CSharpExtensions.Analyzers\bin\$(Configuration)\netstandard2.0\CSharpExtensions.Analyzers.dll">
+    <None Include="$(MSBuildThisFileDirectory)..\CSharpExtensions.Analyzers\bin\$(Configuration)\netstandard1.3\CSharpExtensions.Analyzers.dll">
       <Visible>false</Visible>
       <Pack>true</Pack>
       <PackagePath>analyzers\dotnet\cs</PackagePath>
