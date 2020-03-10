@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -61,9 +62,83 @@ namespace CSharpExtensions.Analyzers
                     });
         }
 
+        private static readonly MethodInfo IsSymbolAccessibleWithinMethod = typeof(Compilation).GetRuntimeMethod("IsSymbolAccessibleWithin", new []
+        {
+            typeof(ISymbol),
+            typeof(ISymbol),
+            typeof(ITypeSymbol)
+        });
+
         private bool IsSymbolAccessible(ISymbol x)
         {
-            return _contextSymbol.Value == null || _semanticModel.Compilation.IsSymbolAccessibleWithin(x, _contextSymbol.Value);
+            if (_contextSymbol.Value == null)
+            {
+                return true;
+            }
+
+            
+            if (IsSymbolAccessibleWithinMethod != null)
+            {
+                //INFO: Invoke via reflection to support VS2017
+                return (bool)IsSymbolAccessibleWithinMethod.Invoke(_semanticModel.Compilation, new[] { x, _contextSymbol.Value, null });
+            }
+
+
+            ClassLocation GetClassLocation()
+            {
+                if (x.ContainingType == _contextSymbol.Value)
+                {
+                    return ClassLocation.Declared;
+
+                }
+
+                if (GetBaseTypesAndThis(x.ContainingType).Any(t => t == _contextSymbol.Value))
+                {
+                    return ClassLocation.Derived;
+                }
+
+                return ClassLocation.Other;
+            }
+
+            bool IsSameAssembly()
+            {
+                if (x.ContainingAssembly == _contextSymbol.Value.ContainingAssembly)
+                {
+                    return true;
+                }
+
+                return x.ContainingAssembly.GetAttributes().Any(x =>
+                    x.AttributeClass.Name == "InternalsVisibleTo" && x.ConstructorArguments[0].Value ==
+                    _contextSymbol.Value.ContainingAssembly.Name);
+            }
+
+            var sameAssembly = IsSameAssembly();
+            var location = GetClassLocation();
+
+            return (x.DeclaredAccessibility, sameAssembly, location) switch
+            {
+                (Accessibility.Public, _, _) => true,
+                (Accessibility.Private, _, ClassLocation.Declared) => true,
+                (Accessibility.Private, _, _) => false,
+                (Accessibility.Protected, _, ClassLocation.Other) => false,
+                (Accessibility.Protected, _, _) => false,
+                (Accessibility.Internal, true, _) => true,
+                (Accessibility.Internal, false, _) => false,
+                (Accessibility.ProtectedOrInternal, false, ClassLocation.Other) => false,
+                (Accessibility.ProtectedOrInternal, _,  _) => true,
+                (Accessibility.ProtectedAndInternal, true, ClassLocation.Declared) => true,
+                (Accessibility.ProtectedAndInternal, true, ClassLocation.Derived) => true,
+                (Accessibility.ProtectedAndInternal, _, _) => false,
+                (_,_,_) => false
+            };
+        }
+
+
+        private enum ClassLocation
+        {
+            Declared,
+            Other,
+            Derived
         }
 
         private IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
