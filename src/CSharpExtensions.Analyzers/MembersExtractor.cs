@@ -9,13 +9,11 @@ namespace CSharpExtensions.Analyzers
 {
     class MembersExtractor
     {
-        private readonly SemanticModel _semanticModel;
-        private readonly Lazy<ISymbol> _contextSymbol;
+        private readonly Lazy<INamedTypeSymbol> _contextSymbol;
 
         public MembersExtractor(SemanticModel semanticModel, SyntaxNode context)
         {
-            _semanticModel = semanticModel;
-            _contextSymbol = new Lazy<ISymbol>(() =>
+            _contextSymbol = new Lazy<INamedTypeSymbol>(() =>
             {
                 var topNode = FindNearestContainer<TypeDeclarationSyntax>(context);
                 if (topNode != null)
@@ -27,8 +25,8 @@ namespace CSharpExtensions.Analyzers
         }
 
 
-        private static SyntaxNode FindNearestContainer<TExpected1>(SyntaxNode tokenParent) 
-            where TExpected1 : SyntaxNode 
+        private static SyntaxNode FindNearestContainer<TExpected1>(SyntaxNode tokenParent)
+            where TExpected1 : SyntaxNode
         {
             if (tokenParent is TExpected1 t1)
             {
@@ -36,7 +34,7 @@ namespace CSharpExtensions.Analyzers
             }
 
 
-            return tokenParent.Parent == null? null: FindNearestContainer<TExpected1>(tokenParent.Parent);
+            return tokenParent.Parent == null ? null : FindNearestContainer<TExpected1>(tokenParent.Parent);
         }
 
         public IEnumerable<ISymbol> GetAllMembersThatCanBeInitialized(ITypeSymbol type)
@@ -51,88 +49,98 @@ namespace CSharpExtensions.Analyzers
                                        property.IsStatic == false &&
                                        property.IsReadOnly == false &&
                                        property.ExplicitInterfaceImplementations.IsEmpty &&
-                                       IsSymbolAccessible(property.SetMethod);
+                                       IsSymbolAccessible(property.SetMethod, type);
                             case IFieldSymbol field:
-                                return field.IsReadOnly == false && 
-                                       field.IsStatic == false && 
-                                       IsSymbolAccessible(field);
+                                return field.IsReadOnly == false &&
+                                       field.IsStatic == false &&
+                                       field.IsImplicitlyDeclared == false &&
+                                       IsSymbolAccessible(field, type);
                             default:
                                 return false;
                         }
                     });
         }
 
-        private static readonly MethodInfo IsSymbolAccessibleWithinMethod = typeof(Compilation).GetRuntimeMethod("IsSymbolAccessibleWithin", new []
+        private static readonly MethodInfo IsSymbolAccessibleWithinMethod = typeof(Compilation).GetRuntimeMethod("IsSymbolAccessibleWithin", new[]
         {
             typeof(ISymbol),
             typeof(ISymbol),
             typeof(ITypeSymbol)
         });
 
-        private bool IsSymbolAccessible(ISymbol x)
+        private bool IsSymbolAccessible(ISymbol x, ITypeSymbol via)
         {
             if (_contextSymbol.Value == null)
             {
                 return true;
             }
 
-            
-            if (IsSymbolAccessibleWithinMethod != null)
-            {
-                //INFO: Invoke via reflection to support VS2017
-                return (bool)IsSymbolAccessibleWithinMethod.Invoke(_semanticModel.Compilation, new[] { x, _contextSymbol.Value, null });
-            }
-
-
-            ClassLocation GetClassLocation()
-            {
-                if (x.ContainingType == _contextSymbol.Value)
-                {
-                    return ClassLocation.Declared;
-
-                }
-
-                if (GetBaseTypesAndThis(x.ContainingType).Any(t => t == _contextSymbol.Value))
-                {
-                    return ClassLocation.Derived;
-                }
-
-                return ClassLocation.Other;
-            }
-
-            bool IsSameAssembly()
-            {
-                if (x.ContainingAssembly == _contextSymbol.Value.ContainingAssembly)
-                {
-                    return true;
-                }
-
-                return x.ContainingAssembly.GetAttributes().Any(x =>
-                    x.AttributeClass.Name == "InternalsVisibleTo" && x.ConstructorArguments[0].Value ==
-                    _contextSymbol.Value.ContainingAssembly.Name);
-            }
-
-            var sameAssembly = IsSameAssembly();
-            var location = GetClassLocation();
-
-            return (x.DeclaredAccessibility, sameAssembly, location) switch
+            return (x.DeclaredAccessibility, IsSameAssembly(x), GetClassLocation(x)) switch
             {
                 (Accessibility.Public, _, _) => true,
                 (Accessibility.Private, _, ClassLocation.Declared) => true,
-                (Accessibility.Private, _, _) => false,
-                (Accessibility.Protected, _, ClassLocation.Other) => false,
-                (Accessibility.Protected, _, _) => false,
+                (Accessibility.Protected, true, ClassLocation.Declared) => true,
+                (Accessibility.Protected, true, ClassLocation.Derived) => InheritFrom(via, _contextSymbol.Value),
                 (Accessibility.Internal, true, _) => true,
-                (Accessibility.Internal, false, _) => false,
-                (Accessibility.ProtectedOrInternal, false, ClassLocation.Other) => false,
-                (Accessibility.ProtectedOrInternal, _,  _) => true,
+                (Accessibility.ProtectedOrInternal, true, _) => true,
+                (Accessibility.ProtectedOrInternal, false, ClassLocation.Derived) => InheritFrom(via, _contextSymbol.Value),
                 (Accessibility.ProtectedAndInternal, true, ClassLocation.Declared) => true,
-                (Accessibility.ProtectedAndInternal, true, ClassLocation.Derived) => true,
-                (Accessibility.ProtectedAndInternal, _, _) => false,
-                (_,_,_) => false
+                (Accessibility.ProtectedAndInternal, true, ClassLocation.Derived) => InheritFrom(via, _contextSymbol.Value),
+                (_, _, _) => false
             };
         }
 
+        ClassLocation GetClassLocation(ISymbol x)
+        {
+            if (x.ContainingType == _contextSymbol.Value)
+            {
+                return ClassLocation.Declared;
+            }
+
+            if (InheritFrom(_contextSymbol.Value, x.ContainingType))
+            {
+                return ClassLocation.Derived;
+            }
+
+            return ClassLocation.Other;
+        }
+
+        private readonly Dictionary<(ITypeSymbol, ITypeSymbol), bool> _inheritanceCache = new Dictionary<(ITypeSymbol, ITypeSymbol), bool>();
+
+        private bool InheritFrom(ITypeSymbol type, INamedTypeSymbol from)
+        {
+            var key = (type, from);
+            if (_inheritanceCache.ContainsKey(key) == false)
+            {
+                _inheritanceCache[key] = GetBaseTypesAndThis(type).Any(t => t.Equals(from));
+            }
+            return _inheritanceCache[key];
+        }
+
+        private readonly Dictionary<(IAssemblySymbol, IAssemblySymbol), bool> _assemblyRelationCache = new Dictionary<(IAssemblySymbol, IAssemblySymbol), bool>();
+
+        bool IsSameAssembly(ISymbol x)
+        {
+            var key = (x.ContainingAssembly, _contextSymbol.Value.ContainingAssembly);
+
+            if (_assemblyRelationCache.ContainsKey(key) == false)
+            {
+                if (x.ContainingAssembly.Equals(_contextSymbol.Value.ContainingAssembly))
+                {
+                    _assemblyRelationCache[key] = true;
+                }
+                else
+                {
+                    _assemblyRelationCache[key] = x.ContainingAssembly.GetAttributes()
+                        .Any(x => x.AttributeClass.Name == "InternalsVisibleToAttribute" &&
+                                  x.ConstructorArguments[0].Value.ToString()
+                                      .StartsWith(_contextSymbol.Value.ContainingAssembly.Name)
+                        );
+                }
+
+            }
+            return _assemblyRelationCache[key];
+        }
 
         private enum ClassLocation
         {
