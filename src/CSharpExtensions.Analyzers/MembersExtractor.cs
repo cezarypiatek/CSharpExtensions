@@ -39,7 +39,7 @@ namespace CSharpExtensions.Analyzers
 
         public IEnumerable<ISymbol> GetAllMembersThatCanBeInitialized(ITypeSymbol type)
         {
-            return GetBaseTypesAndThis(type).SelectMany(x => x.GetMembers()).Where(m =>
+            return GetAllMembers(type).Where(m =>
                     {
                         switch (m)
                         {
@@ -59,6 +59,11 @@ namespace CSharpExtensions.Analyzers
                                 return false;
                         }
                     });
+        }
+
+        public static IEnumerable<ISymbol> GetAllMembers(ITypeSymbol type)
+        {
+            return GetBaseTypesAndThis(type).SelectMany(x => x.GetMembers());
         }
 
         private static readonly MethodInfo IsSymbolAccessibleWithinMethod = typeof(Compilation).GetRuntimeMethod("IsSymbolAccessibleWithin", new[]
@@ -149,7 +154,7 @@ namespace CSharpExtensions.Analyzers
             Derived
         }
 
-        private IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
+        private static IEnumerable<ITypeSymbol> GetBaseTypesAndThis(ITypeSymbol type)
         {
             foreach (var unwrapped in UnwrapGeneric(type))
             {
@@ -161,7 +166,7 @@ namespace CSharpExtensions.Analyzers
                 }
             }
         }
-        private IEnumerable<ITypeSymbol> UnwrapGeneric(ITypeSymbol typeSymbol)
+        private static IEnumerable<ITypeSymbol> UnwrapGeneric(ITypeSymbol typeSymbol)
         {
             if (typeSymbol.TypeKind == TypeKind.TypeParameter && typeSymbol is ITypeParameterSymbol namedType && namedType.Kind != SymbolKind.ErrorType)
             {
@@ -170,7 +175,7 @@ namespace CSharpExtensions.Analyzers
             return new[] { typeSymbol };
         }
 
-        private bool IsSystemObject(ITypeSymbol current)
+        private static bool IsSystemObject(ITypeSymbol current)
         {
             return current.Name == "Object" && current.ContainingNamespace.Name == "System";
         }

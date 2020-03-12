@@ -5,14 +5,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CSharpExtensions.Analyzers
 {
-    //TODO: Add option for ignoring properties types
     //TODO: Add CodeFix for adding missing properties
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class TwinTypeAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "CSE003";
 
-        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, "Type should have the same fields as twin type", "Missing properties from {0}: {1}", "CSharp Extensions", DiagnosticSeverity.Error, isEnabledByDefault: true);
+        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, "Type should have the same fields as twin type", "Missing fields from {0}:\r\n{1}", "CSharp Extensions", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -29,12 +28,12 @@ namespace CSharpExtensions.Analyzers
             {
                 foreach (var twinType in SymbolHelper.GetTwinTypes(namedType))
                 {
-                    var ownProperties = GetProperties(namedType);
-                    var twinProperties = GetProperties(twinType.Type).Except(twinType.IgnoredMembers);
-                    var missingProperties = twinProperties.Except(ownProperties);
-                    if (missingProperties.IsEmpty == false)
+                    var ownMembers = GetMembers(namedType);
+                    var twinMembers = GetMembers(twinType.Type).Except(twinType.IgnoredMembers);
+                    var missingMembers = twinMembers.Except(ownMembers);
+                    if (missingMembers.IsEmpty == false)
                     {
-                        var propertiesString = string.Join(", ", missingProperties);
+                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => $"- {x}"));
                         var diagnostic = Diagnostic.Create(Rule, context.Symbol.Locations[0], twinType.Type.ToDisplayString(), propertiesString);
                         context.ReportDiagnostic(diagnostic);
                     }
@@ -42,9 +41,17 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private static ImmutableHashSet<string> GetProperties(ITypeSymbol namedType)
+        private static ImmutableHashSet<string> GetMembers(ITypeSymbol namedType)
         {
-            return namedType.GetMembers().Where(x => x is IPropertySymbol).Select(x => x.Name).ToImmutableHashSet();
+            return MembersExtractor.GetAllMembers(namedType)
+                .Where(x => x switch
+                {
+                    IPropertySymbol property => property.IsStatic == false,
+                    IFieldSymbol field => field.IsImplicitlyDeclared == false && field.IsStatic == false,
+                    _ => false
+                })
+                .Select(x => x.Name)
+                .ToImmutableHashSet();
         }
     }
 }
