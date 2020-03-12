@@ -4,9 +4,9 @@ namespace SmartAnalyzers.CSharpExtensions.Annotations
 {
     /// <summary>
     /// Specifies that the member this attribute is bound to
-    /// should be obligatorily initialized through initialization block.
+    /// is readonly and should be obligatorily initialized through initialization block.
     /// Applied on the type level enforces this rule for all members (fields and properties)
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public sealed class InitRequiredAttribute : Attribute { }
+    public sealed class InitOnlyAttribute : Attribute { }
 }

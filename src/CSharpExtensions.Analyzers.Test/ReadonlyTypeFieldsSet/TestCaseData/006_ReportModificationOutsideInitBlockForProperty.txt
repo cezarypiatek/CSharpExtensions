@@ -9,19 +9,22 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestC
     {
         public void DoSomething()
         {
-            var user = [|new UserDTO|]()
+            var user = new UserDTO()
             {
                 FirstName = "John",
-                LastName = "Doe"
+                LastName = "Doe",
+                Age = 20
             };
+            user.FirstName = "aaaaa";
+            [|user.Age = 25|];
         }
     }
 
-    [InitRequired]
     public class UserDTO
     {
-        public string FirstName;
-        public string LastName;
-        public int Age;
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        [InitOnly]
+        public int Age { get; set; }
     }
 }

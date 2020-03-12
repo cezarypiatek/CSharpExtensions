@@ -5,7 +5,7 @@ using SmartAnalyzers.CSharpExtensions.Annotations;
 
 namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
 {
-    [ReadonlyType]
+    [InitOnly]
     public class UserDTO
     {
         public string FirstName { get; set; }

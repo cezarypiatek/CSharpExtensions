@@ -5,16 +5,11 @@ using Microsoft.CodeAnalysis;
 
 namespace CSharpExtensions.Analyzers
 {
-    public static class ReadonlyClassHelper
+    public static class SymbolHelper
     {
-        public static bool IsMarkedWithReadonly(ISymbol type) => IsMarkedWithAttribute(type, "ReadonlyTypeAttribute");
-
-        public static bool IsMarkedWithFullInitRequired(ISymbol type) => IsMarkedWithAttribute(type, "FullInitRequiredAttribute");
-
         public static bool IsMarkedWithAttribute(ISymbol type, string attributeName)
         {
-            var fullAttributeName = $"SmartAnalyzers.CSharpExtensions.Annotations.{attributeName}";
-            return type.GetAttributes().Any(x =>  x.AttributeClass.Name == attributeName && x.AttributeClass.ToDisplayString() == fullAttributeName);
+            return type.GetAttributes().Any(x =>  x.AttributeClass.ToDisplayString() == attributeName);
         }
 
         public static IEnumerable<TwinTypeInfo> GetTwinTypes(ITypeSymbol type)

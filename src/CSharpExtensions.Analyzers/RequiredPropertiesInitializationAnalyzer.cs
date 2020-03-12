@@ -102,7 +102,7 @@ namespace CSharpExtensions.Analyzers
             {
                 return members;
             }
-            return members.Where(x=> ReadonlyClassHelper.IsMarkedWithAttribute(x, "InitRequiredAttribute"));
+            return members.Where(x=> SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitRequired) || SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnly));
         }
 
         private static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
@@ -119,8 +119,8 @@ namespace CSharpExtensions.Analyzers
         private static bool IsFullInitRequired(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation)
         {
             return IsMarkedWithComment(objectCreation, "FullInitRequired") || 
-                   ReadonlyClassHelper.IsMarkedWithReadonly(type) || 
-                   ReadonlyClassHelper.IsMarkedWithFullInitRequired(type);
+                   SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitRequired) || 
+                   SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitOnly);
         }
 
         private static bool IsMarkedWithComment(ObjectCreationExpressionSyntax objectCreation, string marker)

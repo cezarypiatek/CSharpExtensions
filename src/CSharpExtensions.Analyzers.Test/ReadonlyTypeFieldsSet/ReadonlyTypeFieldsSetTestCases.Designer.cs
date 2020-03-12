@@ -82,7 +82,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///        }
         ///    }
         ///
-        ///    [ReadonlyType]
+        ///    [FullInitOnly]
         ///    public class Use [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _001_DoNotReportModificationInInitBlock {
@@ -113,7 +113,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///        }
         ///    }
         ///
-        ///    [Rea [rest of string was truncated]&quot;;.
+        ///    [Ful [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _002_ReportModificationOutsideInitBlock {
             get {
@@ -129,7 +129,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
-        ///    [ReadonlyType]
+        ///    [FullInitOnly]
         ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
@@ -158,7 +158,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
-        ///    [ReadonlyType]
+        ///    [FullInitOnly]
         ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
@@ -187,7 +187,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
-        ///    [ReadonlyType]
+        ///    [FullInitOnly]
         ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
@@ -196,13 +196,72 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///
         ///        public UserDTO(string firstName)
         ///        {
-        ///            [|FirstName = firstName|];
+        ///            FirstName = firstName;
         ///        }
-        ///    }        /// [rest of string was truncated]&quot;;.
+        ///    }
+        ///}
+        ///.
         /// </summary>
         internal static string _005_DoNotReportModificationInOwnConstructor {
             get {
                 return ResourceManager.GetString("_005_DoNotReportModificationInOwnConstructor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = new UserDTO()
+        ///            {
+        ///                FirstName = &quot;John&quot;,
+        ///                LastName = &quot;Doe&quot;,
+        ///                Age = 20
+        ///            };
+        ///            user.FirstName = &quot;aaaaa&quot;;
+        ///            [|user.Ag [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _006_ReportModificationOutsideInitBlockForProperty {
+            get {
+                return ResourceManager.GetString("_006_ReportModificationOutsideInitBlockForProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = new UserDTO()
+        ///            {
+        ///                FirstName = &quot;John&quot;,
+        ///                LastName = &quot;Doe&quot;,
+        ///                Age = 20
+        ///            };
+        ///            user.FirstName = &quot;aaaaa&quot;;
+        ///        }
+        ///    }
+        ///
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _007_DoNotReportModificationOutsideInitBlockForNonInitOnly {
+            get {
+                return ResourceManager.GetString("_007_DoNotReportModificationOutsideInitBlockForNonInitOnly", resourceCulture);
             }
         }
     }

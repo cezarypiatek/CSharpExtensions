@@ -15,7 +15,7 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization
 
         protected override IReadOnlyCollection<MetadataReference> References => new[]
         {
-            ReferenceSource.FromType<FullInitRequiredAttribute>()
+            ReferenceSource.FromType<InitRequiredAttribute>()
         };
 
         [Test]

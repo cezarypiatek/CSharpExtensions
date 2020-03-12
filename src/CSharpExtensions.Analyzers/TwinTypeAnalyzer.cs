@@ -27,7 +27,7 @@ namespace CSharpExtensions.Analyzers
         {
             if(context.Symbol is INamedTypeSymbol namedType)
             {
-                foreach (var twinType in ReadonlyClassHelper.GetTwinTypes(namedType))
+                foreach (var twinType in SymbolHelper.GetTwinTypes(namedType))
                 {
                     var ownProperties = GetProperties(namedType);
                     var twinProperties = GetProperties(twinType.Type).Except(twinType.IgnoredMembers);

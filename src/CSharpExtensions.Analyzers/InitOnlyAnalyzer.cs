@@ -7,11 +7,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CSharpExtensions.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ReadonlyTypeFieldsSetAnalyzer : DiagnosticAnalyzer
+    public class InitOnlyAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "CSE002";
 
-        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, "Readonly class fields modification", "Cannot modify fields of readonly class", "CSharp Extensions", DiagnosticSeverity.Error, isEnabledByDefault: true);
+        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, "InitOnly member modification", "Cannot modify InitOnly member", "CSharp Extensions", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -33,7 +33,7 @@ namespace CSharpExtensions.Analyzers
             var memberSymbol = context.SemanticModel.GetSymbolInfo(assignment.Left).Symbol;
             if (memberSymbol is IPropertySymbol || memberSymbol is IFieldSymbol)
             {
-                if (ReadonlyClassHelper.IsMarkedWithReadonly(memberSymbol.ContainingType))
+                if (SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) ||  SymbolHelper.IsMarkedWithAttribute(memberSymbol.ContainingType, SmartAnnotations.InitOnly))
                 {
                     var parentMethod = SyntaxHelper.FindNearestContainer<BaseMethodDeclarationSyntax>(assignment.Parent);
                     if (parentMethod is ConstructorDeclarationSyntax)
