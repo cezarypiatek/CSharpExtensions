@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0.0</Version>
   </PropertyGroup>
   <PropertyGroup>
     <PackageId>SmartAnalyzers.CSharpExtensions.Annotations</PackageId>
-    <PackageVersion>1.0.0.0</PackageVersion>
     <Authors>Cezary Piątek</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/cezarypiatek/CSharpExtensions</PackageProjectUrl>
