@@ -22,6 +22,11 @@ namespace CSharpExtensions.Analyzers
         
         public static TExpected FindNearestContainer<TExpected>(SyntaxNode tokenParent) where TExpected : SyntaxNode 
         {
+            if (tokenParent == null)
+            {
+                return null;
+            }
+
             if (tokenParent is TExpected t1)
             {
                 return t1;

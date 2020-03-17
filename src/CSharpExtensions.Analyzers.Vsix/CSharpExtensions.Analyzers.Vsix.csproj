@@ -54,6 +54,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CSharpExtensions.Analyzers3\CSharpExtensions.Analyzers3.csproj">
+      <Project>{a74928d4-710f-41ca-9bf7-ecccc74d34e9}</Project>
+      <Name>CSharpExtensions.Analyzers3</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CSharpExtensions.Analyzers\CSharpExtensions.Analyzers.csproj">
       <Project>{ADBBE6EC-9AB0-4CA6-97E8-53E2ADA08515}</Project>
       <Name>CSharpExtensions.Analyzers</Name>
