@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -36,10 +38,11 @@ namespace CSharpExtensions.Analyzers
                 {
                     return;
                 }
-                var membersExtractor = new MembersExtractor(context.SemanticModel, initializer);
+
                 var typeInfo = context.SemanticModel.GetTypeInfo(assignment.Left);
                 if (typeInfo.Type != null)
                 {
+                    var membersExtractor = new MembersExtractor(context.SemanticModel, initializer);
                     var membersForInitialization = membersExtractor.GetAllMembersThatCanBeInitialized(typeInfo.Type).Select(x => x.Name).ToImmutableHashSet();
                     if (membersForInitialization.IsEmpty)
                     {
@@ -54,30 +57,48 @@ namespace CSharpExtensions.Analyzers
         private void AnalyzeObjectCreationSyntax(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
-
             var typeInfo = context.SemanticModel.GetSymbolInfo(objectCreation.Type);
 
             if (typeInfo.Symbol is ITypeSymbol type)
             {
-                var membersExtractor = new MembersExtractor(context.SemanticModel, objectCreation);
-                var membersForInitialization = GetMembersForRequiredInitialization(type, objectCreation, membersExtractor).Select(x => x.Name).ToImmutableHashSet();
+                var membersForInitialization = GetMembersForRequiredInit(type, objectCreation, context.SemanticModel).Select(x => x.Name).ToImmutableHashSet();
                 if (membersForInitialization.IsEmpty)
                 {
-                    var annotatedParent = SyntaxHelper.FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(objectCreation.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
-                    if (annotatedParent is null)
-                    {
-                        return;
-                    }
-
-                    membersForInitialization = membersExtractor.GetAllMembersThatCanBeInitialized(type).Select(x => x.Name).ToImmutableHashSet();
-                    if (membersForInitialization.IsEmpty)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 TryToReportMissingMembers(context, objectCreation.Initializer, membersForInitialization, objectCreation.GetLocation());
             }
+        }
+
+        private IEnumerable<ISymbol> GetMembersForRequiredInit(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel)
+        {
+            var membersExtractor = new MembersExtractor(semanticModel, objectCreation);
+            if (IsInsideInitBlockWithFullInit(objectCreation) ||
+                SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitRequired) ||
+                SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitOnly))
+            {
+               return membersExtractor.GetAllMembersThatCanBeInitialized(type);
+            }
+            else
+            {
+                var symbolCache = new SymbolHelperCache();
+                return membersExtractor.GetAllMembersThatCanBeInitialized(type, (x, contextSymbol) =>
+                    SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitRequired) ||
+                    SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnly) ||
+                    NonNullableShouldBeInitialized(x, contextSymbol, symbolCache));
+            }
+        }
+
+        private static bool IsInsideInitBlockWithFullInit(ObjectCreationExpressionSyntax objectCreation)
+        {
+            if (IsMarkedWithComment(objectCreation, "FullInitRequired"))
+            {
+                return true;
+            }
+
+            var annotatedParent = SyntaxHelper.FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(objectCreation.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
+            return annotatedParent is null == false;
         }
 
         private static void  TryToReportMissingMembers(SyntaxNodeAnalysisContext context,
@@ -90,19 +111,39 @@ namespace CSharpExtensions.Analyzers
             {
                 var missingMembersList = string.Join("\r\n", missingMembers.Select(x => $"- {x}"));
                 
-                var diagnostic = Diagnostic.Create(RequiredPropertiesInitializationAnalyzer.Rule, getLocation, missingMembersList);
+                var diagnostic = Diagnostic.Create(Rule, getLocation, missingMembersList);
                 context.ReportDiagnostic(diagnostic);
             }
         }
 
-        private static IEnumerable<ISymbol> GetMembersForRequiredInitialization(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation, MembersExtractor extractor)
+        private static bool NonNullableShouldBeInitialized(ISymbol member, ISymbol context,
+            SymbolHelperCache symbolHelperCache) => 
+            (
+                symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) ||
+                symbolHelperCache.IsMarkedWithAttribute(context.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull)
+            ) && IsNotNullable(member);
+
+
+        private static readonly PropertyInfo? PropertyNullableAnnotation = typeof(IPropertySymbol).GetRuntimeProperty("NullableAnnotation");
+        private static readonly PropertyInfo? FieldNullableAnnotation = typeof(IFieldSymbol).GetRuntimeProperty("NullableAnnotation");
+
+        private static bool IsNotNullable(ISymbol symbol)
         {
-            var members = extractor.GetAllMembersThatCanBeInitialized(type);
-            if (IsFullInitRequired(type, objectCreation))
+            switch (symbol)
             {
-                return members;
+                case IPropertySymbol property:
+                {
+                    var value = PropertyNullableAnnotation?.GetValue(property);
+                    return value != null && Convert.ToInt32(value) == 1;
+                }
+                case IFieldSymbol field:
+                {
+                    var value = FieldNullableAnnotation?.GetValue(field);
+                    return value != null && Convert.ToInt32(value) == 1;
+                }
+                default:
+                    return false;
             }
-            return members.Where(x=> SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitRequired) || SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnly));
         }
 
         private static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
@@ -114,13 +155,6 @@ namespace CSharpExtensions.Analyzers
 
             return objectInitialization.Expressions.OfType<AssignmentExpressionSyntax>().Select(x => x.Left)
                 .OfType<IdentifierNameSyntax>().Select(x => x.Identifier.Text).ToImmutableHashSet();
-        }
-
-        private static bool IsFullInitRequired(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation)
-        {
-            return IsMarkedWithComment(objectCreation, "FullInitRequired") || 
-                   SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitRequired) || 
-                   SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitOnly);
         }
 
         private static bool IsMarkedWithComment(ObjectCreationExpressionSyntax objectCreation, string marker)

@@ -5,7 +5,28 @@ using Microsoft.CodeAnalysis;
 
 namespace CSharpExtensions.Analyzers
 {
-    public static class SymbolHelper
+    public class SymbolHelperCache
+    {
+        private readonly Dictionary<ISymbol, Dictionary<string, bool>> _symbolAttributes = new Dictionary<ISymbol, Dictionary<string, bool>>();
+
+        public bool IsMarkedWithAttribute(ISymbol type, string attributeName)
+        {
+            if (_symbolAttributes.ContainsKey(type) == false)
+            {
+                _symbolAttributes.Add(type, new Dictionary<string, bool>());
+            }
+
+            var bucket = _symbolAttributes[type];
+            if (bucket.ContainsKey(attributeName) == false)
+            {
+                bucket[attributeName] = SymbolHelper.IsMarkedWithAttribute(@type, attributeName);
+            }
+
+            return bucket[attributeName];
+        }
+    }
+
+    public class SymbolHelper
     {
         public static bool IsMarkedWithAttribute(ISymbol type, string attributeName)
         {

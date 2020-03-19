@@ -9,6 +9,7 @@ namespace CSharpExtensions.Analyzers3
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public partial class NotNullablePropertyInitializationDiagnosticSuppressor: DiagnosticSuppressor
     {
+        
         private static readonly SuppressionDescriptor SuppressionDescriptor = new SuppressionDescriptor("SPCS8618", "CS8618", "Member decorated with attribute guaranteeing initialization via init block");
 
         public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions { get; } = ImmutableArray.Create(SuppressionDescriptor);
