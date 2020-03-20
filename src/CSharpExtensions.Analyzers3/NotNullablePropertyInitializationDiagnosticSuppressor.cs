@@ -19,15 +19,15 @@ namespace CSharpExtensions.Analyzers3
             foreach (var diagnostic in context.ReportedDiagnostics)
             {
                 var root = diagnostic.Location.SourceTree.GetRoot().FindNode(diagnostic.Location.SourceSpan);
-                if (root is PropertyDeclarationSyntax propertyDeclaration)
+                if (root is MemberDeclarationSyntax memberDeclaration)
                 {
-                    if (HasAttributeWithInitGuarantee(propertyDeclaration.AttributeLists))
+                    if (HasAttributeWithInitGuarantee(memberDeclaration.AttributeLists))
                     {
                         context.ReportSuppression(Suppression.Create(SuppressionDescriptor, diagnostic));
                     }
                     else
                     {
-                       var typeDeclaration =  SyntaxHelper.FindNearestContainer<TypeDeclarationSyntax>(propertyDeclaration);
+                       var typeDeclaration =  SyntaxHelper.FindNearestContainer<TypeDeclarationSyntax>(memberDeclaration);
                        if (typeDeclaration != null && HasAttributeWithInitGuarantee(typeDeclaration.AttributeLists))
                        {
                            context.ReportSuppression(Suppression.Create(SuppressionDescriptor, diagnostic));
