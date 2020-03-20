@@ -16,8 +16,15 @@ namespace CSharpExtensions.Analyzers3
 
         public override void ReportSuppressions(SuppressionAnalysisContext context)
         {
+            var suppressAll = IsMarkedWithAttribute(context.Compilation.Assembly, "SmartAnalyzers.CSharpExtensions.Annotations.InitRequiredForNotNullAttribute");
             foreach (var diagnostic in context.ReportedDiagnostics)
             {
+                if (suppressAll)
+                {
+                    context.ReportSuppression(Suppression.Create(SuppressionDescriptor, diagnostic));
+                    continue;
+                }
+
                 var root = diagnostic.Location.SourceTree.GetRoot().FindNode(diagnostic.Location.SourceSpan);
                 if (root is MemberDeclarationSyntax memberDeclaration)
                 {
@@ -35,6 +42,11 @@ namespace CSharpExtensions.Analyzers3
                     }
                 }
             }
+        }
+
+        private static bool IsMarkedWithAttribute(IAssemblySymbol symbol, string attribute)
+        {
+            return symbol.GetAttributes().Any(x => x.AttributeClass.ToDisplayString() == attribute);
         }
 
         private bool HasAttributeWithInitGuarantee(SyntaxList<AttributeListSyntax> attributes)
