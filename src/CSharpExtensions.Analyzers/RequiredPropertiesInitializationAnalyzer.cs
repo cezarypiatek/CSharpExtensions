@@ -121,23 +121,31 @@ namespace CSharpExtensions.Analyzers
             (
                 symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) ||
                 symbolHelperCache.IsMarkedWithAttribute(context.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull)
-            ) && IsNotNullable(member);
+            ) && IsNotNullableReference(member);
 
 
         private static readonly PropertyInfo? PropertyNullableAnnotation = typeof(IPropertySymbol).GetRuntimeProperty("NullableAnnotation");
         private static readonly PropertyInfo? FieldNullableAnnotation = typeof(IFieldSymbol).GetRuntimeProperty("NullableAnnotation");
 
-        private static bool IsNotNullable(ISymbol symbol)
+        private static bool IsNotNullableReference(ISymbol symbol)
         {
             switch (symbol)
             {
                 case IPropertySymbol property:
                 {
+                    if (property.Type.IsValueType)
+                    {
+                        return false;
+                    }
                     var value = PropertyNullableAnnotation?.GetValue(property);
                     return value != null && Convert.ToInt32(value) == 1;
                 }
                 case IFieldSymbol field:
                 {
+                    if (field.Type.IsValueType)
+                    {
+                        return false;
+                    }
                     var value = FieldNullableAnnotation?.GetValue(field);
                     return value != null && Convert.ToInt32(value) == 1;
                 }
