@@ -37,7 +37,7 @@ namespace CSharpExtensions.Analyzers
             return tokenParent.Parent == null ? null : FindNearestContainer<TExpected1>(tokenParent.Parent);
         }
 
-        public IEnumerable<ISymbol> GetAllMembersThatCanBeInitialized(ITypeSymbol type, Func<ISymbol, ISymbol, bool> filter=null)
+        public IEnumerable<ISymbol> GetAllMembersThatCanBeInitialized(ITypeSymbol type)
         {
             return GetAllMembers(type).Where(m =>
                     {
@@ -58,7 +58,7 @@ namespace CSharpExtensions.Analyzers
                             default:
                                 return false;
                         }
-                    }).Where(symbol => filter?.Invoke(symbol, this._contextSymbol.Value) ?? true);
+                    });
         }
 
         public static IEnumerable<ISymbol> GetAllMembers(ITypeSymbol type)
