@@ -80,14 +80,12 @@ namespace CSharpExtensions.Analyzers
             {
                return membersExtractor.GetAllMembersThatCanBeInitialized(type);
             }
-            else
-            {
-                var symbolCache = new SymbolHelperCache();
-                return membersExtractor.GetAllMembersThatCanBeInitialized(type, (x, contextSymbol) =>
-                    SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitRequired) ||
-                    SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnly) ||
-                    NonNullableShouldBeInitialized(x, contextSymbol, symbolCache));
-            }
+
+            var symbolCache = new SymbolHelperCache();
+            return membersExtractor.GetAllMembersThatCanBeInitialized(type).Where(memberSymbol =>
+                SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitRequired) ||
+                SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) ||
+                NonNullableShouldBeInitialized(memberSymbol, symbolCache));
         }
 
         private static bool IsInsideInitBlockWithFullInit(ObjectCreationExpressionSyntax objectCreation)
@@ -116,12 +114,8 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private static bool NonNullableShouldBeInitialized(ISymbol member, ISymbol context,
-            SymbolHelperCache symbolHelperCache) => 
-            (
-                symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) ||
-                symbolHelperCache.IsMarkedWithAttribute(context.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull)
-            ) && IsNotNullableReference(member);
+        private static bool NonNullableShouldBeInitialized(ISymbol member, SymbolHelperCache symbolHelperCache) => 
+            symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) && IsNotNullableReference(member);
 
 
         private static readonly PropertyInfo? PropertyNullableAnnotation = typeof(IPropertySymbol).GetRuntimeProperty("NullableAnnotation");
