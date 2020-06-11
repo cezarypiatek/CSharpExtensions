@@ -91,5 +91,11 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization
         {
             this.HasDiagnostic(_012_MissingFieldsFullInitRequiredAttribute, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
         }
+        
+        [Test]
+        public void should_not_report_missing_init_for_init_only_optional()
+        {
+            this.NoDiagnostic(_013_DoNotReportMissingPropertiesForInitOnlyOptional, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
+        }
     }
 }

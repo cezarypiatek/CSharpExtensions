@@ -154,4 +154,7 @@
   <data name="_012_MissingFieldsFullInitRequiredAttribute" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\012_MissingFieldsFullInitRequiredAttribute.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_013_DoNotReportMissingPropertiesForInitOnlyOptional" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\013_DoNotReportMissingPropertiesForInitOnlyOptional.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

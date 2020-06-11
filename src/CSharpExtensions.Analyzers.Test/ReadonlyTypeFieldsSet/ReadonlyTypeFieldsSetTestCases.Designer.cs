@@ -82,8 +82,8 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///        }
         ///    }
         ///
-        ///    [FullInitOnly]
-        ///    public class Use [rest of string was truncated]&quot;;.
+        ///    [InitOnly]
+        ///    public class UserDTO [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _001_DoNotReportModificationInInitBlock {
             get {
@@ -113,7 +113,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///        }
         ///    }
         ///
-        ///    [Ful [rest of string was truncated]&quot;;.
+        ///    [Ini [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _002_ReportModificationOutsideInitBlock {
             get {
@@ -129,7 +129,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
-        ///    [FullInitOnly]
+        ///    [InitOnly]
         ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
@@ -158,7 +158,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
-        ///    [FullInitOnly]
+        ///    [InitOnly]
         ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
@@ -187,7 +187,7 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
-        ///    [FullInitOnly]
+        ///    [InitOnly]
         ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
@@ -262,6 +262,66 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         internal static string _007_DoNotReportModificationOutsideInitBlockForNonInitOnly {
             get {
                 return ResourceManager.GetString("_007_DoNotReportModificationOutsideInitBlockForNonInitOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = new UserDTO()
+        ///            {
+        ///                FirstName = &quot;John&quot;,
+        ///                LastName = &quot;Doe&quot;,
+        ///                Age = 20
+        ///            };
+        ///            [|user.Age = 25|];
+        ///        }
+        ///    }
+        ///
+        ///    publ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _008_ReportModificationForInitOnlyOptional {
+            get {
+                return ResourceManager.GetString("_008_ReportModificationForInitOnlyOptional", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = new UserDTO()
+        ///            {
+        ///                FirstName = &quot;John&quot;,
+        ///                LastName = &quot;Doe&quot;,
+        ///                Age = 20
+        ///            };
+        ///            [|user.Age = 25|];
+        ///        }
+        ///    }
+        ///
+        ///    publ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _009_DoNotReportInitOnlyOptionalModifucationInFieldDefinition {
+            get {
+                return ResourceManager.GetString("_009_DoNotReportInitOnlyOptionalModifucationInFieldDefinition", resourceCulture);
             }
         }
     }

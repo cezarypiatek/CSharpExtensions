@@ -33,7 +33,9 @@ namespace CSharpExtensions.Analyzers
             var memberSymbol = context.SemanticModel.GetSymbolInfo(assignment.Left).Symbol;
             if (memberSymbol is IPropertySymbol || memberSymbol is IFieldSymbol)
             {
-                if (SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) ||  SymbolHelper.IsMarkedWithAttribute(memberSymbol.ContainingType, SmartAnnotations.InitOnly))
+                if (SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) || 
+                    SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnlyOptional) ||  
+                    SymbolHelper.IsMarkedWithAttribute(memberSymbol.ContainingType, SmartAnnotations.InitOnly))
                 {
                     var parentMethod = SyntaxHelper.FindNearestContainer<BaseMethodDeclarationSyntax>(assignment.Parent);
                     if (parentMethod is ConstructorDeclarationSyntax)
