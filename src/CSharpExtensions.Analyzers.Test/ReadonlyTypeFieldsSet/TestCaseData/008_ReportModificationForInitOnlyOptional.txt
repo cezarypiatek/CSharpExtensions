@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+    class Test
+    {
+        public void DoSomething()
+        {
+            var user = new UserDTO()
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Age = 20
+            };
+            [|user.Age = 25|];
+        }
+    }
+
+    public class UserDTO
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        [InitOnlyOptional]
+        public int Age { get; set; } = 25;
+    }
+}

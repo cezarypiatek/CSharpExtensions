@@ -118,31 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_001_DoNotReportModificationInInitBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\001_DoNotReportModificationInInitBlock.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="_001_ReportMissingPropertyInitialization" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\001_ReportMissingPropertyInitialization.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="_002_ReportModificationOutsideInitBlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\002_ReportModificationOutsideInitBlock.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="_002_ReportMissingFieldInitialization" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\002_ReportMissingFieldInitialization.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="_003_ReportModificationInOwnMethodViaThis" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\003_ReportModificationInOwnMethodViaThis.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="_003_DoNotReportMissingPropertyInitialization" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\003_DoNotReportMissingPropertyInitialization.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="_004_ReportModificationInOwnMethodWithoutThis" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\004_ReportModificationInOwnMethodWithoutThis.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="_005_DoNotReportModificationInOwnConstructor" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\005_DoNotReportModificationInOwnConstructor.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="_006_ReportModificationOutsideInitBlockForProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\006_ReportModificationOutsideInitBlockForProperty.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="_007_DoNotReportModificationOutsideInitBlockForNonInitOnly" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\007_DoNotReportModificationOutsideInitBlockForNonInitOnly.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="_008_ReportModificationForInitOnlyOptional" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\008_ReportModificationForInitOnlyOptional.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="_009_DoNotReportInitOnlyOptionalModifucationInFieldDefinition" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\009_DoNotReportInitOnlyOptionalModifucationInFieldDefinition.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="_004_DoNotReportMissingFieldInitialization" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\004_DoNotReportMissingFieldInitialization.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

@@ -78,7 +78,7 @@ namespace CSharpExtensions.Analyzers
                 SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitRequired) ||
                 SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitOnly))
             {
-               return membersExtractor.GetAllMembersThatCanBeInitialized(type);
+               return membersExtractor.GetAllMembersThatCanBeInitialized(type).Where(x => SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false);
             }
 
             var symbolCache = new SymbolHelperCache();

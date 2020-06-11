@@ -28,6 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="InitOnlyOptional\InitOnlyOptionalTestCases.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>InitOnlyOptionalTestCases.resx</DependentUpon>
+    </Compile>
     <Compile Update="ReadonlyTypeFieldsSet\ReadonlyTypeFieldsSetTestCases.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -41,6 +46,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="InitOnlyOptional\InitOnlyOptionalTestCases.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>InitOnlyOptionalTestCases.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="ReadonlyTypeFieldsSet\ReadonlyTypeFieldsSetTestCases.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ReadonlyTypeFieldsSetTestCases.Designer.cs</LastGenOutput>

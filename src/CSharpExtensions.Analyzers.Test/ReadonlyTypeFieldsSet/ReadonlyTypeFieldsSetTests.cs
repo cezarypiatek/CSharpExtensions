@@ -59,5 +59,17 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet
         {
             NoDiagnostic(_007_DoNotReportModificationOutsideInitBlockForNonInitOnly, InitOnlyAnalyzer.DiagnosticId);
         }
+        
+        [Test]
+        public void should_report_modification_for_init_only_optional()
+        {
+            HasDiagnostic(_008_ReportModificationForInitOnlyOptional, InitOnlyAnalyzer.DiagnosticId);
+        }
+        
+        [Test]
+        public void should_not_report_modification_for_init_only_optional_in_member_declaration()
+        {
+            NoDiagnostic(_009_DoNotReportInitOnlyOptionalModifucationInFieldDefinition, InitOnlyAnalyzer.DiagnosticId);
+        }
     }
 }
