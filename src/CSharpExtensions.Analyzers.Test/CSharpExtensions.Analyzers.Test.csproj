@@ -43,6 +43,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RequiredPropertiesInitializationTestCases.resx</DependentUpon>
     </Compile>
+    <Compile Update="TwinTypes\TwinTypeAnalyzerTestsTestCases.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TwinTypeAnalyzerTestsTestCases.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +62,10 @@
     <EmbeddedResource Update="RequiredPropertiesInitialization\RequiredPropertiesInitializationTestCases.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RequiredPropertiesInitializationTestCases.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="TwinTypes\TwinTypeAnalyzerTestsTestCases.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TwinTypeAnalyzerTestsTestCases.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

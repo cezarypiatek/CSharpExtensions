@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
@@ -66,5 +67,53 @@ namespace CSharpExtensions.Analyzers
     {
         public INamedTypeSymbol Type { get; set; }
         public string[] IgnoredMembers { get; set; }
+
+        public IReadOnlyList<MemberSymbolInfo> GetMissingMembersFor(INamedTypeSymbol namedType)
+        {
+            var ownMembers = GetMembers(namedType);
+            var twinMembers = GetMembers(this.Type).Where(x=> IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
+            return twinMembers.Except(ownMembers).ToList();
+        }
+
+        private static IReadOnlyList<MemberSymbolInfo> GetMembers(ITypeSymbol namedType)
+        {
+            return MembersExtractor.GetAllMembers(namedType)
+                .Where(x => x switch
+                {
+                    IPropertySymbol property => property.IsStatic == false && property.IsIndexer == false,
+                    IFieldSymbol field => field.IsImplicitlyDeclared == false && field.IsStatic == false,
+                    _ => false
+                })
+                .Select(x =>new MemberSymbolInfo(x))
+                .ToList();
+        }
+    }
+
+    public class MemberSymbolInfo
+    {
+        public ISymbol Symbol { get; }
+
+        public MemberSymbolInfo(ISymbol symbol)
+        {
+            Symbol = symbol;
+        }
+
+        protected bool Equals(MemberSymbolInfo other)
+        {
+            return Equals(Symbol.Name, other?.Symbol?.Name);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((MemberSymbolInfo) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Symbol?.Name.GetHashCode() ?? 0;
+        }
     }
 }

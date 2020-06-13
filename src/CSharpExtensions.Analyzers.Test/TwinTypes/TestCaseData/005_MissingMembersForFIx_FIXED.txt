@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+
+    [TwinType(typeof(UserEntity))]
+    public class UserDTO
+    {
+        public string FirstName { get; set; }
+        int Age { get; set; }
+        string FullName { get; set; }
+        int Id { get; set; }
+        string LastName { get; set; }
+        int Version { get; set; }
+    }
+    
+    public class UserEntity: BaseEntity
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Age;
+        public string FullName => $"{FirstName} {LastName}"
+
+    }
+    
+    public class BaseEntity
+    {
+        public int Id { get; set; }
+        public int Version { get; set; }
+    }
+}
