@@ -229,13 +229,13 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
         ///
-        ///    [TwinType(typeof(UserEntity), NamePrefix = &quot;MainAddress&quot;)]
-        ///    public class [|UserDTO|]
+        ///    [TwinType(typeof(AddressEntity), NamePrefix = &quot;MainAddress&quot;)]
+        ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
         ///        public string LastName { get; set; }
         ///        public string MainAddressFlatNo { get; set; }
-        ///        public string MainAddressBuildingNo { [rest of string was truncated]&quot;;.
+        ///        public string MainAddressBuildingNo {  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _006_PropertiesWithPrefix {
             get {
@@ -252,7 +252,7 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
         ///
-        ///    [TwinType(typeof(UserEntity), NamePrefix = &quot;MainAddress&quot;)]
+        ///    [TwinType(typeof(AddressEntity), NamePrefix = &quot;MainAddress&quot;)]
         ///    public class [|UserDTO|]
         ///    {
         ///        public string FirstName { get; set; }
@@ -261,7 +261,7 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///    
         ///    public class AddressEntity
         ///    {
-        ///        public string FlatNo { get; set;  [rest of string was truncated]&quot;;.
+        ///        public string FlatNo { get; se [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _007_PropertiesWithPrefixForFix {
             get {
@@ -278,21 +278,66 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
         ///
-        ///    [TwinType(typeof(UserEntity), NamePrefix = &quot;MainAddress&quot;)]
+        ///    [TwinType(typeof(AddressEntity), NamePrefix = &quot;MainAddress&quot;)]
         ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
-        ///        public string LastName { get; set; }       
-        ///    }
-        ///    
-        ///    public class AddressEntity
-        ///    {
-        ///        public string FlatNo { get; set; }
+        ///        public string LastName { get; set; }
+        ///        string MainAddressBuildingNo { get; set; }
+        ///        string MainAddressFlatNo { get; set; }
         ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _007_PropertiesWithPrefixForFix_FIXED {
             get {
                 return ResourceManager.GetString("_007_PropertiesWithPrefixForFix_FIXED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(AddressEntity), NamePrefix = &quot;MainAddress&quot;)]
+        ///    [TwinType(typeof(AddressEntity), NamePrefix = &quot;ShippingAddress&quot;)]
+        ///    public class [|UserDTO|]
+        ///    {
+        ///        public string FirstName { get; set; }
+        ///        public string LastName { get; set; }       
+        ///    }
+        ///    
+        ///    pu [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _008_PropertiesWithPrefixWithTwoTwinsForFix {
+            get {
+                return ResourceManager.GetString("_008_PropertiesWithPrefixWithTwoTwinsForFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(AddressEntity), NamePrefix = &quot;MainAddress&quot;)]
+        ///    [TwinType(typeof(AddressEntity), NamePrefix = &quot;ShippingAddress&quot;)]
+        ///    public class UserDTO
+        ///    {
+        ///        public string FirstName { get; set; }
+        ///        public string LastName { get; set; }
+        ///        string ShippingAddress [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _008_PropertiesWithPrefixWithTwoTwinsForFix_FIXED {
+            get {
+                return ResourceManager.GetString("_008_PropertiesWithPrefixWithTwoTwinsForFix_FIXED", resourceCulture);
             }
         }
     }

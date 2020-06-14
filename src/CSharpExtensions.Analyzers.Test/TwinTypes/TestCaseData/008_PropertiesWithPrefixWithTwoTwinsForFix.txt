@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+
+    [TwinType(typeof(AddressEntity), NamePrefix = "MainAddress")]
+    [TwinType(typeof(AddressEntity), NamePrefix = "ShippingAddress")]
+    public class [|UserDTO|]
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }       
+    }
+    
+    public class AddressEntity
+    {
+        public string FlatNo { get; set; }
+        public string BuildingNo { get; set; }
+        public string Street { get; set; }
+        public string ZipCode { get; set; }
+    }
+}

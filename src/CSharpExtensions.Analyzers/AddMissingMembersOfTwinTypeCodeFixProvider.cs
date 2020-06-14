@@ -24,14 +24,23 @@ namespace CSharpExtensions.Analyzers
             
             if (typeDeclaration is {} && ModelExtensions.GetDeclaredSymbol(semanticModel, typeDeclaration) is INamedTypeSymbol namedType)
             {
-                var twinTypes = SymbolHelper.GetTwinTypes(namedType).ToDictionary(x=>x.Type.ToDisplayString(), x=>x);
+                var twinTypes = SymbolHelper.GetTwinTypes(namedType).GroupBy(x => x.Type.ToDisplayString())
+                    .ToDictionary(x => x.Key, x => x.ToList());
+                
                 foreach (var diagnostic in context.Diagnostics)
                 {
                     if (diagnostic.Id == TwinTypeAnalyzer.DiagnosticId && diagnostic.Properties.TryGetValue("TwinType", out var twinTypeName))
                     {
-                        if (twinTypes.TryGetValue(twinTypeName, out var twinTypeInfo))
+                        if (twinTypes.TryGetValue(twinTypeName, out var twinTypeInfos))
                         {
-                            context.RegisterCodeFix(CodeAction.Create($"Add missing members from type {twinTypeName}", token =>  AddMissingMembers(context.Document, namedType, typeDeclaration, twinTypeInfo, token)), diagnostic);
+                            foreach (var twinTypeInfo in twinTypeInfos)
+                            {
+                                var message = string.IsNullOrWhiteSpace(twinTypeInfo.NamePrefix)
+                                    ? $"Add missing members from type {twinTypeName}"
+                                    : $"Add missing members from type {twinTypeName} prefixed with {twinTypeInfo.NamePrefix}";
+
+                                context.RegisterCodeFix(CodeAction.Create(message, token =>  AddMissingMembers(context.Document, namedType, typeDeclaration, twinTypeInfo, token)), diagnostic);
+                            }
                         }
                     }
                 }

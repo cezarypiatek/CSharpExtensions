@@ -76,5 +76,11 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         {
             TestCodeFix(TwinTypeAnalyzerTestsTestCases._007_PropertiesWithPrefixForFix, TwinTypeAnalyzerTestsTestCases._007_PropertiesWithPrefixForFix_FIXED, TwinTypeAnalyzer.DiagnosticId);
         }
+        
+        [Test]
+        public void should_add_missing_properties_with_prefix_from_second_twin()
+        {
+            TestCodeFix(TwinTypeAnalyzerTestsTestCases._008_PropertiesWithPrefixWithTwoTwinsForFix, TwinTypeAnalyzerTestsTestCases._008_PropertiesWithPrefixWithTwoTwinsForFix_FIXED, TwinTypeAnalyzer.DiagnosticId, 1);
+        }
     }
 }
