@@ -177,7 +177,7 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///{
         ///
         ///    [TwinType(typeof(UserEntity))]
-        ///    public class UserDTO
+        ///    public class [|UserDTO|]
         ///    {
         ///        public string FirstName { get; set; }   
         ///    }
@@ -186,7 +186,7 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///    {
         ///        public string FirstName { get; set; }
         ///        public string LastName { get; set; }
-        ///        public int Ag [rest of string was truncated]&quot;;.
+        ///        public in [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _005_MissingMembersForFIx {
             get {
@@ -206,18 +206,93 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///    [TwinType(typeof(UserEntity))]
         ///    public class UserDTO
         ///    {
-        ///        public string FirstName { get; set; }   
-        ///    }
-        ///    
-        ///    public class UserEntity: BaseEntity
-        ///    {
         ///        public string FirstName { get; set; }
-        ///        public string LastName { get; set; }
-        ///        public int Ag [rest of string was truncated]&quot;;.
+        ///        int Age { get; set; }
+        ///        string FullName { get; set; }
+        ///        int Id { get; set; }
+        ///        string LastName { get; set; }
+        ///        int Version { get; set; }
+        ///     [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _005_MissingMembersForFIx_FIXED {
             get {
                 return ResourceManager.GetString("_005_MissingMembersForFIx_FIXED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(UserEntity), NamePrefix = &quot;MainAddress&quot;)]
+        ///    public class [|UserDTO|]
+        ///    {
+        ///        public string FirstName { get; set; }
+        ///        public string LastName { get; set; }
+        ///        public string MainAddressFlatNo { get; set; }
+        ///        public string MainAddressBuildingNo { [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _006_PropertiesWithPrefix {
+            get {
+                return ResourceManager.GetString("_006_PropertiesWithPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(UserEntity), NamePrefix = &quot;MainAddress&quot;)]
+        ///    public class [|UserDTO|]
+        ///    {
+        ///        public string FirstName { get; set; }
+        ///        public string LastName { get; set; }       
+        ///    }
+        ///    
+        ///    public class AddressEntity
+        ///    {
+        ///        public string FlatNo { get; set;  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _007_PropertiesWithPrefixForFix {
+            get {
+                return ResourceManager.GetString("_007_PropertiesWithPrefixForFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(UserEntity), NamePrefix = &quot;MainAddress&quot;)]
+        ///    public class UserDTO
+        ///    {
+        ///        public string FirstName { get; set; }
+        ///        public string LastName { get; set; }       
+        ///    }
+        ///    
+        ///    public class AddressEntity
+        ///    {
+        ///        public string FlatNo { get; set; }
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _007_PropertiesWithPrefixForFix_FIXED {
+            get {
+                return ResourceManager.GetString("_007_PropertiesWithPrefixForFix_FIXED", resourceCulture);
             }
         }
     }

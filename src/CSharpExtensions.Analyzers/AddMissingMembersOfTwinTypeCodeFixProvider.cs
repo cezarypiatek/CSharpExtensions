@@ -60,11 +60,11 @@ namespace CSharpExtensions.Analyzers
             {
                 if (missingMember.Symbol is IPropertySymbol propertySymbol)
                 {
-                    yield return CreateAutoProperty(syntaxGenerator, propertySymbol.Name, propertySymbol.Type);
+                    yield return CreateAutoProperty(syntaxGenerator, missingMember.ExpectedName, propertySymbol.Type);
                 }
                 else if (missingMember.Symbol is IFieldSymbol fieldSymbol)
                 {
-                    yield return CreateAutoProperty(syntaxGenerator, fieldSymbol.Name, fieldSymbol.Type);
+                    yield return CreateAutoProperty(syntaxGenerator, missingMember.ExpectedName, fieldSymbol.Type);
                 }
             }
         }

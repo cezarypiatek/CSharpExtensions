@@ -136,4 +136,13 @@
   <data name="_005_MissingMembersForFIx_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\005_MissingMembersForFIx_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_006_PropertiesWithPrefix" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\006_PropertiesWithPrefix.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_007_PropertiesWithPrefixForFix" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\007_PropertiesWithPrefixForFix.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_007_PropertiesWithPrefixForFix_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\007_PropertiesWithPrefixForFix_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>
