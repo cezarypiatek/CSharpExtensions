@@ -24,14 +24,14 @@ namespace CSharpExtensions.Analyzers
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if(context.Symbol is INamedTypeSymbol namedType)
+            if(context.Symbol is INamedTypeSymbol namedType && (namedType.TypeKind == TypeKind.Class || namedType.TypeKind == TypeKind.Struct))
             {
                 foreach (var twinType in SymbolHelper.GetTwinTypes(namedType))
                 {
                     var missingMembers = twinType.GetMissingMembersFor(namedType);
                     if (missingMembers.Count > 0)
                     {
-                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => $"- {x.Symbol.Name}"));
+                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => $"- {x.ExpectedName}"));
                         var properties = new Dictionary<string, string>()
                         {
                             ["TwinType"] = twinType.Type.ToDisplayString()

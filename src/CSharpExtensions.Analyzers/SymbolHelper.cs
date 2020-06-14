@@ -44,10 +44,16 @@ namespace CSharpExtensions.Analyzers
                     yield return new TwinTypeInfo()
                     {
                         Type = twinType,
-                        IgnoredMembers = GetIgnoredMembers(twinAttribute)
+                        IgnoredMembers = GetIgnoredMembers(twinAttribute),
+                        NamePrefix = TryGetNamePrefix(twinAttribute)
                     };
                 }
             }
+        }
+
+        private static string TryGetNamePrefix(AttributeData twinAttribute)
+        {
+            return twinAttribute.NamedArguments.FirstOrDefault(x=>x.Key == "NamePrefix").Value.Value?.ToString();
         }
 
         private static string[] GetIgnoredMembers(AttributeData twinAttribute)
@@ -68,14 +74,18 @@ namespace CSharpExtensions.Analyzers
         public INamedTypeSymbol Type { get; set; }
         public string[] IgnoredMembers { get; set; }
 
+        public string NamePrefix { get; set; }
+
         public IReadOnlyList<MemberSymbolInfo> GetMissingMembersFor(INamedTypeSymbol namedType)
         {
             var ownMembers = GetMembers(namedType);
-            var twinMembers = GetMembers(this.Type).Where(x=> IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
+            var twinMembers = GetMembers(this.Type, NamePrefix).Where(x=> IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
             return twinMembers.Except(ownMembers).ToList();
         }
 
-        private static IReadOnlyList<MemberSymbolInfo> GetMembers(ITypeSymbol namedType)
+      
+
+        private static IReadOnlyList<MemberSymbolInfo> GetMembers(ITypeSymbol namedType, string namePrefix = null)
         {
             return MembersExtractor.GetAllMembers(namedType)
                 .Where(x => x switch
@@ -84,7 +94,7 @@ namespace CSharpExtensions.Analyzers
                     IFieldSymbol field => field.IsImplicitlyDeclared == false && field.IsStatic == false,
                     _ => false
                 })
-                .Select(x =>new MemberSymbolInfo(x))
+                .Select(x =>new MemberSymbolInfo(x, namePrefix))
                 .ToList();
         }
     }
@@ -92,15 +102,18 @@ namespace CSharpExtensions.Analyzers
     public class MemberSymbolInfo
     {
         public ISymbol Symbol { get; }
+        public string ExpectedName { get; }
 
-        public MemberSymbolInfo(ISymbol symbol)
+
+        public MemberSymbolInfo(ISymbol symbol, string namePrefix)
         {
             Symbol = symbol;
+            ExpectedName = namePrefix + symbol.Name;
         }
 
         protected bool Equals(MemberSymbolInfo other)
         {
-            return Equals(Symbol.Name, other?.Symbol?.Name);
+            return Equals(ExpectedName, other?.ExpectedName);
         }
 
         public override bool Equals(object obj)
@@ -113,7 +126,7 @@ namespace CSharpExtensions.Analyzers
 
         public override int GetHashCode()
         {
-            return Symbol?.Name.GetHashCode() ?? 0;
+            return ExpectedName?.GetHashCode() ?? 0;
         }
     }
 }

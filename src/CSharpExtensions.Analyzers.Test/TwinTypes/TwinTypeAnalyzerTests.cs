@@ -44,6 +44,13 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         {
             NoDiagnostic(TwinTypeAnalyzerTestsTestCases._004_NoMissingProperties, TwinTypeAnalyzer.DiagnosticId);
         }
+        
+        [Test]
+        public void should_not_report_prefixed_members_as_missing()
+        {
+            NoDiagnostic(TwinTypeAnalyzerTestsTestCases._006_PropertiesWithPrefix, TwinTypeAnalyzer.DiagnosticId);
+        }
+
     }
 
     public class TwinTypeCodeFixTests: CodeFixTestFixture
@@ -62,6 +69,12 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         public void should_add_missing_properties_and_fields()
         {
             TestCodeFix(TwinTypeAnalyzerTestsTestCases._005_MissingMembersForFIx, TwinTypeAnalyzerTestsTestCases._005_MissingMembersForFIx_FIXED, TwinTypeAnalyzer.DiagnosticId);
+        }
+        
+        [Test]
+        public void should_add_missing_properties_with_prefix()
+        {
+            TestCodeFix(TwinTypeAnalyzerTestsTestCases._007_PropertiesWithPrefixForFix, TwinTypeAnalyzerTestsTestCases._007_PropertiesWithPrefixForFix_FIXED, TwinTypeAnalyzer.DiagnosticId);
         }
     }
 }
