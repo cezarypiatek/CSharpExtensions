@@ -31,7 +31,7 @@ namespace CSharpExtensions.Analyzers
                     var missingMembers = twinType.GetMissingMembersFor(namedType);
                     if (missingMembers.Count > 0)
                     {
-                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => $"- {x}"));
+                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => $"- {x.Symbol.Name}"));
                         var properties = new Dictionary<string, string>()
                         {
                             ["TwinType"] = twinType.Type.ToDisplayString()
