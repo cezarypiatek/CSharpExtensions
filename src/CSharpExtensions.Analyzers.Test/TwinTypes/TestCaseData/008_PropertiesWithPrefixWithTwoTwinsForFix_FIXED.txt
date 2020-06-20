@@ -12,10 +12,10 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestC
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        string ShippingAddressBuildingNo { get; set; }
-        string ShippingAddressFlatNo { get; set; }
-        string ShippingAddressStreet { get; set; }
-        string ShippingAddressZipCode { get; set; }
+        public string ShippingAddressBuildingNo { get; set; }
+        public string ShippingAddressFlatNo { get; set; }
+        public string ShippingAddressStreet { get; set; }
+        public string ShippingAddressZipCode { get; set; }
     }
     
     public class AddressEntity

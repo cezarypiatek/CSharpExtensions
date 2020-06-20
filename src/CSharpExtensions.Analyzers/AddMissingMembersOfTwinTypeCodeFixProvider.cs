@@ -80,7 +80,7 @@ namespace CSharpExtensions.Analyzers
 
         private static PropertyDeclarationSyntax CreateAutoProperty(SyntaxGenerator syntaxGenerator, string name, ITypeSymbol type)
         {
-            var newProperty = (PropertyDeclarationSyntax) syntaxGenerator.PropertyDeclaration(name, syntaxGenerator.TypeExpression(type));
+            var newProperty = (PropertyDeclarationSyntax) syntaxGenerator.PropertyDeclaration(name, syntaxGenerator.TypeExpression(type), Accessibility.Public);
             return newProperty.WithAccessorList(SyntaxFactory.AccessorList(SyntaxFactory.List(
 
                 new[]
