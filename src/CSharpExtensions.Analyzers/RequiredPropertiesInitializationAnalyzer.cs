@@ -57,6 +57,12 @@ namespace CSharpExtensions.Analyzers
         private void AnalyzeObjectCreationSyntax(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
+
+            if (objectCreation.ArgumentList?.Arguments.Any() == true)
+            {
+                return;
+            }
+
             var typeInfo = context.SemanticModel.GetSymbolInfo(objectCreation.Type);
 
             if (typeInfo.Symbol is ITypeSymbol type)
