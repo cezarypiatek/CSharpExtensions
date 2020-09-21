@@ -10,7 +10,7 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestC
     public class [|UserDTO|]
     {
         public string FirstName { get; set; }
-        public string LastName { get; set; }        
+        public string LastName { get; set; }
     }
     
     public class UserEntity
