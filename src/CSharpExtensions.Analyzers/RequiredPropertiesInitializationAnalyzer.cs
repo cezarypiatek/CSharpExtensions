@@ -78,7 +78,8 @@ namespace CSharpExtensions.Analyzers
                 SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitRequired) ||
                 SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitOnly))
             {
-               return membersExtractor.GetAllMembersThatCanBeInitialized(type).Where(x => SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false);
+               return membersExtractor.GetAllMembersThatCanBeInitialized(type)
+                   .Where(x => (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false) && (IsNullableMember(x) == false));
             }
 
             var symbolCache = new SymbolHelperCache();
@@ -86,6 +87,23 @@ namespace CSharpExtensions.Analyzers
                 SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitRequired) ||
                 SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) ||
                 NonNullableShouldBeInitialized(memberSymbol, symbolCache));
+        }
+
+        private bool IsNullableMember(ISymbol symbol) => symbol switch
+        {
+            IPropertySymbol property => IsNullable(property.Type),
+            IFieldSymbol field => IsNullable(field.Type),
+            _ => false
+        };
+
+        private bool IsNullable(ITypeSymbol type)
+        {
+            if (type.IsValueType && type.Name == "Nullable" && type.ContainingNamespace?.Name == "System")
+            {
+                return true;
+            }
+
+            return type.IsAnnotatedAsNullable() == true;
         }
 
         private static bool IsInsideInitBlockWithFullInit(ObjectCreationExpressionSyntax objectCreation)
