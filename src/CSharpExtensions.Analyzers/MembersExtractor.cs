@@ -84,7 +84,7 @@ namespace CSharpExtensions.Analyzers
                 (Accessibility.ProtectedOrInternal, false, ClassLocation.Derived) => InheritFrom(via, _contextSymbol.Value),
                 (Accessibility.ProtectedAndInternal, true, ClassLocation.Declared) => true,
                 (Accessibility.ProtectedAndInternal, true, ClassLocation.Derived) => InheritFrom(via, _contextSymbol.Value),
-                (_, _, _) => false
+                _ => false
             };
         }
 
