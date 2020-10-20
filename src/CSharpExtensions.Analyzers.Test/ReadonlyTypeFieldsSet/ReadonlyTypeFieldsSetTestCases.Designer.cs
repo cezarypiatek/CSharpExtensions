@@ -303,25 +303,51 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
-        ///    class Test
+        ///    public class UserDTO
         ///    {
-        ///        public void DoSomething()
-        ///        {
-        ///            var user = new UserDTO()
-        ///            {
-        ///                FirstName = &quot;John&quot;,
-        ///                LastName = &quot;Doe&quot;,
-        ///                Age = 20
-        ///            };
-        ///            [|user.Age = 25|];
-        ///        }
+        ///        public string FirstName { get; set; }
+        ///        public string LastName { get; set; }
+        ///        [InitOnlyOptional]
+        ///        public int Age { get; set; } = 25;
+        ///        
+        ///        [InitOnlyOptional]
+        ///        public int NewAge  = 25;
         ///    }
-        ///
-        ///    publ [rest of string was truncated]&quot;;.
+        ///}
+        ///.
         /// </summary>
         internal static string _009_DoNotReportInitOnlyOptionalModifucationInFieldDefinition {
             get {
                 return ResourceManager.GetString("_009_DoNotReportInitOnlyOptionalModifucationInFieldDefinition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    [InitOnly]
+        ///    public class UserDTO
+        ///    {
+        ///        public string FirstName { get; set; }
+        ///        public string LastName { get; set; }
+        ///        public int Age { get; set; }
+        ///
+        ///        public UserDTO(string firstName)
+        ///        {
+        ///            FirstName = firstName;
+        ///        }
+        ///    }
+        ///}
+        ///.
+        /// </summary>
+        internal static string _010_DoNotReportModificationInOwnProperty {
+            get {
+                return ResourceManager.GetString("_010_DoNotReportModificationInOwnProperty", resourceCulture);
             }
         }
     }

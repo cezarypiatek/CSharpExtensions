@@ -33,23 +33,47 @@ namespace CSharpExtensions.Analyzers
             var memberSymbol = context.SemanticModel.GetSymbolInfo(assignment.Left).Symbol;
             if (memberSymbol is IPropertySymbol || memberSymbol is IFieldSymbol)
             {
-                if (SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) || 
-                    SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnlyOptional) ||  
-                    SymbolHelper.IsMarkedWithAttribute(memberSymbol.ContainingType, SmartAnnotations.InitOnly))
+                if (IsInitOnlyMember(memberSymbol))
                 {
-                    var parentMethod = SyntaxHelper.FindNearestContainer<BaseMethodDeclarationSyntax>(assignment.Parent);
-                    if (parentMethod is ConstructorDeclarationSyntax)
+                    var containerMember = SyntaxHelper.FindNearestContainer<MemberDeclarationSyntax>(assignment.Parent);
+                    if (AllowsForInitAssignment(containerMember, assignment) && BelongsToTheSameType(context, memberSymbol, containerMember))
                     {
-                        var constructorSymbol = context.SemanticModel.GetDeclaredSymbol(parentMethod);
-                        if (constructorSymbol != null && constructorSymbol.ContainingType == memberSymbol.ContainingType)
-                        {
-                            return;
-                        }
+                        return;
                     }
+                   
                     var diagnostic = Diagnostic.Create(Rule, assignment.GetLocation());
                     context.ReportDiagnostic(diagnostic);
                 }
             }
+        }
+
+        private static bool AllowsForInitAssignment(MemberDeclarationSyntax containerMember, AssignmentExpressionSyntax assignment)
+        {
+            if (containerMember is ConstructorDeclarationSyntax)
+            {
+                return true;
+            }
+
+            if (containerMember is PropertyDeclarationSyntax && SyntaxHelper.FindNearestContainer<AccessorDeclarationSyntax, PropertyDeclarationSyntax>(assignment.Parent, syntax => syntax.Keyword.Kind() == SyntaxKind.SetKeyword) != null)
+            {
+                return true;
+            }
+
+            return  false;
+        }
+
+        private static bool BelongsToTheSameType(SyntaxNodeAnalysisContext context, ISymbol memberSymbol, MemberDeclarationSyntax containerMember)
+        {
+            var containerSymbol = context.SemanticModel.GetDeclaredSymbol(containerMember);
+            var belongsToTheSameType = containerSymbol != null && containerSymbol.ContainingType == memberSymbol.ContainingType;
+            return belongsToTheSameType;
+        }
+
+        private static bool IsInitOnlyMember(ISymbol memberSymbol)
+        {
+            return SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) || 
+                   SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnlyOptional) ||  
+                   SymbolHelper.IsMarkedWithAttribute(memberSymbol.ContainingType, SmartAnnotations.InitOnly);
         }
     }
 }
