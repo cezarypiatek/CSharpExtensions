@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+    [InitOnly]
+    public class TestObject
+    {
+        private string name;
+
+        public string Name
+        {
+            get => name;
+            set => name = $"{MyConst.PREFIX}_{value}";
+        }
+    }
+}
