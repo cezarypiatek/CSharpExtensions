@@ -64,9 +64,19 @@ namespace CSharpExtensions.Analyzers
 
         private static bool BelongsToTheSameType(SyntaxNodeAnalysisContext context, ISymbol memberSymbol, MemberDeclarationSyntax containerMember)
         {
-            var containerSymbol = context.SemanticModel.GetDeclaredSymbol(containerMember);
-            var belongsToTheSameType = containerSymbol != null && containerSymbol.ContainingType == memberSymbol.ContainingType;
-            return belongsToTheSameType;
+            var containingType = context.SemanticModel.GetDeclaredSymbol(containerMember)?.ContainingType;
+
+            while (containingType != null)
+            {
+                if (containingType.Equals(memberSymbol.ContainingType))
+                {
+                    return true;
+                }
+
+                containingType = containingType.BaseType;
+            }
+
+            return false;
         }
 
         private static bool IsInitOnlyMember(ISymbol memberSymbol)

@@ -331,15 +331,14 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
         ///    [InitOnly]
-        ///    public class UserDTO
+        ///    public class TestObject
         ///    {
-        ///        public string FirstName { get; set; }
-        ///        public string LastName { get; set; }
-        ///        public int Age { get; set; }
+        ///        private string name;
         ///
-        ///        public UserDTO(string firstName)
+        ///        public string Name
         ///        {
-        ///            FirstName = firstName;
+        ///            get =&gt; name;
+        ///            set =&gt; name = $&quot;{MyConst.PREFIX}_{value}&quot;;
         ///        }
         ///    }
         ///}
@@ -348,6 +347,35 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet {
         internal static string _010_DoNotReportModificationInOwnProperty {
             get {
                 return ResourceManager.GetString("_010_DoNotReportModificationInOwnProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    public abstract class BaseClass
+        ///    {
+        ///        [InitOnly]
+        ///        public string MyMember { get; set; }
+        ///
+        ///        public BaseClass()
+        ///        {
+        ///           MyMember = &quot;test&quot;; //Allowed
+        ///        }
+        ///    }
+        ///
+        ///    public class InheritFromBaseClass : BaseClass
+        ///    {
+        ///        public InheritFrom [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _011_DoNotReportModificationInInheritedConstructor {
+            get {
+                return ResourceManager.GetString("_011_DoNotReportModificationInInheritedConstructor", resourceCulture);
             }
         }
     }
