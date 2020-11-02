@@ -148,4 +148,7 @@
   <data name="_010_DoNotReportModificationInOwnProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\010_DoNotReportModificationInOwnProperty.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_011_DoNotReportModificationInInheritedConstructor" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\011_DoNotReportModificationInInheritedConstructor.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

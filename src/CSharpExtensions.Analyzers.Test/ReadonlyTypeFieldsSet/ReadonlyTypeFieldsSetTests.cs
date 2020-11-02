@@ -77,5 +77,12 @@ namespace CSharpExtensions.Analyzers.Test.ReadonlyTypeFieldsSet
         {
             NoDiagnostic(_010_DoNotReportModificationInOwnProperty, InitOnlyAnalyzer.DiagnosticId);
         }
+
+
+        [Test]
+        public void should_not_report_modification_in_inherited_constructor()
+        {
+            NoDiagnostic(_011_DoNotReportModificationInInheritedConstructor, InitOnlyAnalyzer.DiagnosticId);
+        }
     }
 }

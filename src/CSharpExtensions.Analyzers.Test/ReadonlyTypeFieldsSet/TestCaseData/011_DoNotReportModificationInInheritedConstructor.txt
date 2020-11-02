@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+    public abstract class BaseClass
+    {
+        [InitOnly]
+        public string MyMember { get; set; }
+
+        public BaseClass()
+        {
+           MyMember = "test"; //Allowed
+        }
+    }
+
+    public class InheritFromBaseClass : BaseClass
+    {
+        public InheritFromBaseClass()
+        {
+            MyMember = "test";
+        }
+    }
+}
