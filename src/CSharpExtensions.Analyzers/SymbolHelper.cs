@@ -78,17 +78,16 @@ namespace CSharpExtensions.Analyzers
 
         public IReadOnlyList<MemberSymbolInfo> GetMissingMembersFor(INamedTypeSymbol namedType)
         {
-            var ownMembers = GetMembers(namedType);
-            var twinMembers = GetMembers(this.Type, NamePrefix).Where(x=> IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
+            var memberExtractor = new MembersExtractor(namedType);
+
+            var ownMembers = GetMembers(memberExtractor, namedType);
+            var twinMembers = GetMembers(memberExtractor, this.Type, NamePrefix).Where(x=> IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
             return twinMembers.Except(ownMembers).ToList();
         }
 
-      
-
-        private static IReadOnlyList<MemberSymbolInfo> GetMembers(ITypeSymbol namedType, string namePrefix = null)
+        private static IReadOnlyList<MemberSymbolInfo> GetMembers(MembersExtractor membersExtractor, ITypeSymbol namedType, string namePrefix = null)
         {
-            return MembersExtractor.GetAllMembers(namedType)
-                .Where(x => x switch
+            return membersExtractor.GetAllAccessibleMembers(namedType, x => x switch
                 {
                     IPropertySymbol property => property.IsStatic == false && property.IsIndexer == false,
                     IFieldSymbol field => field.IsImplicitlyDeclared == false && field.IsStatic == false,

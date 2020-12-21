@@ -12,12 +12,18 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestC
         public int Id { get; set; }
         public int Version { get; set; }
         public string FirstName { get; set; }
-        public string LastName { get; set; }        
+        public string LastName { get; set; }
     }
     
     public class UserEntity: BaseEntity
     {
-        public string FirstName { get; set; }
+        private string _firstName;
+
+        public string FirstName
+        {
+            get => _firstName;
+            set => _firstName = value;
+        }
         public string LastName { get; set; }
     }
     

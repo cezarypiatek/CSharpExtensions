@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -22,6 +21,11 @@ namespace CSharpExtensions.Analyzers
                 }
                 return null;
             });
+        }
+
+        public MembersExtractor(INamedTypeSymbol contextSymbol)
+        {
+            _contextSymbol = new Lazy<INamedTypeSymbol>(()=> contextSymbol);
         }
 
 
@@ -61,9 +65,14 @@ namespace CSharpExtensions.Analyzers
                     });
         }
 
-        public static IEnumerable<ISymbol> GetAllMembers(ITypeSymbol type)
+        private static IEnumerable<ISymbol> GetAllMembers(ITypeSymbol type)
         {
             return GetBaseTypesAndThis(type).SelectMany(x => x.GetMembers());
+        }
+        
+        public IEnumerable<ISymbol> GetAllAccessibleMembers(ITypeSymbol type, Func<ISymbol, bool> filter)
+        {
+            return GetAllMembers(type).Where(filter).Where(m => IsSymbolAccessible(m, type));
         }
 
         private bool IsSymbolAccessible(ISymbol x, ITypeSymbol via)
