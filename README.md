@@ -1,6 +1,11 @@
 # CSharpExtensions
 
+Nuget packge: https://www.nuget.org/packages/SmartAnalyzers.CSharpExtensions.Annotations/
 
+Articles that explain implemented concepts:
+- [Immutable types in C# with Roslyn](https://cezarypiatek.github.io/post/immutable-types-with-roslyn/)
+- [Improving non-nullable reference types handling](https://cezarypiatek.github.io/post/better-non-nullable-handling/)
+- [Twin types - properties synchronization without inheritance](https://cezarypiatek.github.io/post/csharp-twin-types/)
 
 ## Analyzers
 
