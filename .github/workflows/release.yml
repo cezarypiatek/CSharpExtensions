@@ -1,0 +1,84 @@
+name: release
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - '!src/.editorconfig'
+jobs:
+  build-extension:
+    runs-on: windows-latest
+    env: 
+        DOTNET_NOLOGO: true
+        DOTNET_CLI_TELEMETRY_OPTOUT: true
+        RepositoryUrl: 'https://github.com/${{ github.repository }}'
+        RepositoryBranch: '${{ github.ref }}'
+        SourceRevisionId: '${{ github.sha }}'        
+        Configuration: Release
+        SolutionPath: src\CSharpExtensions.sln
+        Deterministic: true
+        PackageReleaseNotes: 'https://github.com/${{ github.repository }}/releases'
+    steps:
+    - uses: actions/checkout@v2   
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x'   
+    - name: Calculate next version
+      uses: cezarypiatek/NextVersionGeneratorAction@0.4
+      with:
+        minor-pattern: '.*'
+        output-to-env-variable: 'VersionPrefix'    
+    - name: Materialize Signing Key
+      id: write_sign_key_file
+      uses: timheuer/base64-to-file@v1
+      with:
+        fileName: 'CSharpExtensions.snk'
+        encodedString: ${{ secrets.SIGNING_KEY }}
+    - name: Restore dependencies
+      run: |
+        dotnet nuget locals all --clear
+        dotnet restore $env:SolutionPath         
+    - name: Build extension
+      run: dotnet build $env:SolutionPath 
+      env:
+        SignAssembly: true
+        AssemblyOriginatorKeyFile: ${{ steps.write_sign_key_file.outputs.filePath }}     
+    - name: Test extension
+      run: dotnet test --no-build --verbosity normal $env:SolutionPath   
+    - name: Generate release note
+      run: |
+        git fetch --prune --unshallow
+        $commitLog = git log "$(git describe --tags --abbrev=0)..HEAD" --pretty=format:"- %s"
+        "What's new: `r`n`r`n$([string]::Join("`r`n",$commitLog))" | Out-File release_note.md -Encoding utf8
+    - name: Create Github Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.Version }}
+        release_name:  ${{ env.Version }}
+        body_path: release_note.md
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset - MappingGenerator Nuget
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: src\CSharpExtensions.Annotations\bin\Release\SmartAnalyzers.CSharpExtensions.Annotations.${{ env.Version }}.nupkg
+        asset_name: SmartAnalyzers.CSharpExtensions.Annotations.${{ env.Version }}.nupkg
+        asset_content_type: binary/octet-stream
+    - name: Publish extension to Marketplace
+      uses: cezarypiatek/VsixPublisherAction@0.1
+      with:
+        extension-file: ${{ env.VsixPath }}
+        publish-manifest-file: ${{ env.VsixPublishManifestPath }}
+        personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}      
+    - name: Publish extension to Nuget
+      run: |
+        dotnet nuget push src\CSharpExtensions.Annotations\bin\Release\SmartAnalyzers.CSharpExtensions.Annotations.${{ env.Version }}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+
