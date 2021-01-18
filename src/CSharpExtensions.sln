@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions.Annotation
 		{ADBBE6EC-9AB0-4CA6-97E8-53E2ADA08515} = {ADBBE6EC-9AB0-4CA6-97E8-53E2ADA08515}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpExtensions.Analyzers.Vsix", "CSharpExtensions.Analyzers.Vsix\CSharpExtensions.Analyzers.Vsix.csproj", "{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions.Analyzers3", "CSharpExtensions.Analyzers3\CSharpExtensions.Analyzers3.csproj", "{A74928D4-710F-41CA-9BF7-ECCCC74D34E9}"
 EndProject
 Global
@@ -35,10 +33,6 @@ Global
 		{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37F3AC53-3457-4D5E-BDBE-804F70D9A75F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E05EB21-ECD0-4AA6-9E1A-A276EE7898A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A74928D4-710F-41CA-9BF7-ECCCC74D34E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A74928D4-710F-41CA-9BF7-ECCCC74D34E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A74928D4-710F-41CA-9BF7-ECCCC74D34E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
