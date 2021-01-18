@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'src/**'
+      - '!src/.editorconfig'
 jobs:
   build-extension:
     runs-on: windows-latest
@@ -60,7 +63,7 @@ jobs:
         body_path: release_note.md
         draft: false
         prerelease: false
-    - name: Upload Release Asset - MappingGenerator Nuget
+    - name: Upload Release Asset - Nuget
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
