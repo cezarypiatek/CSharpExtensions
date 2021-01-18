@@ -34,7 +34,9 @@ jobs:
         fileName: 'CSharpExtensions.snk'
         encodedString: ${{ secrets.SIGNING_KEY }}
     - name: Restore dependencies
-      run: dotnet restore $env:SolutionPath 
+      run: |
+        dotnet nuget locals all --clear
+        dotnet restore $env:SolutionPath         
     - name: Build extension
       run: dotnet build $env:SolutionPath 
       env:
