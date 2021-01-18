@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'src/**'
-      - '!src/.editorconfig'
 jobs:
   build-extension:
     runs-on: windows-latest
@@ -29,7 +26,7 @@ jobs:
       uses: cezarypiatek/NextVersionGeneratorAction@0.4
       with:
         minor-pattern: '.*'
-        output-to-env-variable: 'VersionPrefix'    
+        output-to-env-variable: 'Version'    
     - name: Materialize Signing Key
       id: write_sign_key_file
       uses: timheuer/base64-to-file@v1
@@ -71,14 +68,7 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: src\CSharpExtensions.Annotations\bin\Release\SmartAnalyzers.CSharpExtensions.Annotations.${{ env.Version }}.nupkg
         asset_name: SmartAnalyzers.CSharpExtensions.Annotations.${{ env.Version }}.nupkg
-        asset_content_type: binary/octet-stream
-    - name: Publish extension to Marketplace
-      uses: cezarypiatek/VsixPublisherAction@0.1
-      with:
-        extension-file: ${{ env.VsixPath }}
-        publish-manifest-file: ${{ env.VsixPublishManifestPath }}
-        personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}      
+        asset_content_type: binary/octet-stream    
     - name: Publish extension to Nuget
       run: |
         dotnet nuget push src\CSharpExtensions.Annotations\bin\Release\SmartAnalyzers.CSharpExtensions.Annotations.${{ env.Version }}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
-

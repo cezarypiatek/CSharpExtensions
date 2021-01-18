@@ -7,7 +7,6 @@
   <PropertyGroup>
     <PackageId>SmartAnalyzers.CSharpExtensions.Annotations</PackageId>
     <Authors>Cezary Piątek</Authors>
-    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/cezarypiatek/CSharpExtensions</PackageProjectUrl>
     <PackageIconUrl>https://github.com/cezarypiatek/CSharpExtensions/raw/master/doc/logo.jpg</PackageIconUrl>
     <RepositoryUrl>https://github.com/cezarypiatek/CSharpExtensions</RepositoryUrl>
