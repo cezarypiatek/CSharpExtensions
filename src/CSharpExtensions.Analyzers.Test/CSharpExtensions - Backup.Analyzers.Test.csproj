@@ -45,11 +45,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RequiredPropertiesInitializationTestCases.resx</DependentUpon>
     </Compile>
-    <Compile Update="ReturnValueUnused\ReturnValueUnusedTestsTestCases.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ReturnValueUnusedTestsTestCases.resx</DependentUpon>
-    </Compile>
     <Compile Update="TwinTypes\TwinTypeAnalyzerTestsTestCases.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -72,7 +67,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="ReturnValueUnused\ReturnValueUnusedTestsTestCases.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ReturnValueUnusedTestsTestCases.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="TwinTypes\TwinTypeAnalyzerTestsTestCases.resx">
       <Generator>ResXFileCodeGenerator</Generator>

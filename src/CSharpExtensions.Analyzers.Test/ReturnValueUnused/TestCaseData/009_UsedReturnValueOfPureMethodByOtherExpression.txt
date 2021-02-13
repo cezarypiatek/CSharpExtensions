@@ -1,0 +1,14 @@
+﻿namespace TestNamespace
+{
+    class SampleClass
+    {
+        public void Test()
+        {
+            ShouldDo([|IsOk()|]);
+        }
+
+        public void ShouldDo(bool ok) => throw null;
+
+        public bool IsOk() => true;
+    }
+}

@@ -1,0 +1,12 @@
+﻿namespace TestNamespace
+{
+    class SampleClass
+    {
+        public void Test()
+        {
+            var x = [|DoSomething()|];
+        }
+
+        public int DoSomething() => 1;
+    }
+}

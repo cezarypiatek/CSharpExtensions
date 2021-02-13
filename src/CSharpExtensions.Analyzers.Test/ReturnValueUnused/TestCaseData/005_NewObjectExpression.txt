@@ -1,0 +1,15 @@
+﻿namespace TestNamespace
+{
+    class SampleClass
+    {
+        public void Test()
+        {
+            [|new OtherType()|];
+        }
+    }
+
+    class OtherType
+    {
+        
+    }
+}
