@@ -25,6 +25,11 @@
       <Pack>true</Pack>
       <PackagePath>analyzers\dotnet\cs</PackagePath>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\CSharpExtensions.Analyzers\bin\$(Configuration)\netstandard1.3\Newtonsoft.Json.dll">
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>analyzers\dotnet\cs</PackagePath>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\CSharpExtensions.Analyzers3\bin\$(Configuration)\netstandard2.0\CSharpExtensions.Analyzers3.dll">

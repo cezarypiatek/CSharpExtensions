@@ -16,3 +16,28 @@ Articles that explain implemented concepts:
 |CSE003|Type should have the same fields as twin type| `[TwinType]` | [link](https://cezarypiatek.github.io/post/csharp-twin-types/#the-solution-extending-c-rules-with-custom-analyzer)|
 |CSE004| Member with InitOnlyOptional requires default value| `[InitOnlyOptional]` ||
 |CSE005| Return value unused | ||
+
+
+## Configuration
+
+Add `CSharpExtensions.json` file with custom configuration:
+
+```json
+{
+  "CSE005": {
+    "IgnoredReturnTypes": [ 
+        "Microsoft.Extensions.DependencyInjection.IServiceCollection",
+        "Microsoft.Extensions.Configuration.IConfigurationBuilder",
+        "Microsoft.Extensions.Logging.ILoggingBuilder"
+        ] 
+  } 
+}
+```
+
+Include config file as `AdditionalFile` in `csproj`:
+
+```xml
+<ItemGroup>
+    <AdditionalFiles Include="CSharpExtensions.json" />
+</ItemGroup>
+```
