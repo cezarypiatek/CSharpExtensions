@@ -1,0 +1,14 @@
+﻿using System.Threading.Tasks;
+
+namespace TestNamespace
+{
+    class SampleClass
+    {
+        public async Task Test()
+        {
+            [|await DoSomething()|];
+        }
+
+       public Task DoSomething() => Task.CompletedTask;
+    }
+}

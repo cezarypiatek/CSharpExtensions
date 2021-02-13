@@ -1,0 +1,9 @@
+﻿namespace TestNamespace
+{
+    class SampleClass
+    {
+        public bool IsBetter() => [|IsOk()|];
+
+        public bool IsOk() => true;
+    }
+}

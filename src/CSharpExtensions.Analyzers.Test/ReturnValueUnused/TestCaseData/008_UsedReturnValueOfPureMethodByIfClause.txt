@@ -1,0 +1,14 @@
+﻿namespace TestNamespace
+{
+    class SampleClass
+    {
+        public void Test()
+        {
+            if([|IsOk()|])
+            {
+            }
+        }
+
+        public bool IsOk() => true;
+    }
+}

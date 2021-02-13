@@ -1,0 +1,17 @@
+﻿namespace TestNamespace
+{
+    class SampleClass
+    {
+        public void Do()
+        {
+            [|this.Other.IsOk()|];
+        }
+
+       public OtherType Other = new OtherType();
+    }
+
+    class OtherType
+    {
+        public bool IsOk() => true;
+    }
+}
