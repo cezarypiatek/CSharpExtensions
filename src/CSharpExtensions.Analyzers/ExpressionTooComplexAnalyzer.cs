@@ -47,7 +47,12 @@ namespace CSharpExtensions.Analyzers
                     {
                         if (IsNonTrivialExpression(argument))
                         {
-                            var diagnostic = Diagnostic.Create(Rule, expression.GetLocation());
+                            var location = expression switch
+                            {
+                                InvocationExpressionSyntax invocationExpression when invocationExpression.Expression is MemberAccessExpressionSyntax ma => ma.Name.GetLocation(),
+                                _ => expression.GetLocation()
+                            };
+                            var diagnostic = Diagnostic.Create(Rule, location);
                             ctx.ReportDiagnostic(diagnostic);
                             return;
                         }
@@ -57,7 +62,7 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private static bool IsNonTrivialExpression(ArgumentSyntax argument)
+        public static bool IsNonTrivialExpression(ArgumentSyntax argument)
         {
             if (argument.Expression is  InvocationExpressionSyntax invocationExpression)
             {
@@ -74,12 +79,12 @@ namespace CSharpExtensions.Analyzers
 
             if (argument.Expression is BinaryExpressionSyntax binaryExpression)
             {
-                if (binaryExpression.Left is InvocationExpressionSyntax or ObjectCreationExpressionSyntax or AwaitExpressionSyntax or ConditionalExpressionSyntax or BinaryExpressionSyntax)
+                if (binaryExpression.Left is InvocationExpressionSyntax or ObjectCreationExpressionSyntax or AwaitExpressionSyntax or ConditionalExpressionSyntax or BinaryExpressionSyntax or ParenthesizedExpressionSyntax)
                 {
                     return true;
                 }
                 
-                if (binaryExpression.Right is InvocationExpressionSyntax or ObjectCreationExpressionSyntax or AwaitExpressionSyntax or ConditionalExpressionSyntax or BinaryExpressionSyntax)
+                if (binaryExpression.Right is InvocationExpressionSyntax or ObjectCreationExpressionSyntax or AwaitExpressionSyntax or ConditionalExpressionSyntax or BinaryExpressionSyntax or ParenthesizedExpressionSyntax)
                 {
                     return true;
                 }
