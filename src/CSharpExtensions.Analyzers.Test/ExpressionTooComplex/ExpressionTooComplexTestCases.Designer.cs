@@ -71,15 +71,37 @@ namespace CSharpExtensions.Analyzers.Test.ExpressionTooComplex {
         ///            _ = [|F1(F2(1, 2), F3(3, 4))|];
         ///        }
         ///
-        ///        public int F1(int argument1, int argument2) =&gt; throw null;
-        ///        public int F2(int argument1, int argument2) =&gt; throw null;
-        ///        public int F3(int argument1, int argument2) =&gt; throw null;
+        ///        public int F1(int a, int b) =&gt; throw null;
+        ///        public int F2(int c, int d) =&gt; throw null;
+        ///        public int F3(int e, int f) =&gt; throw null;
         ///    }
         ///}.
         /// </summary>
         internal static string _001_TooMuchInvocationsInside {
             get {
                 return ResourceManager.GetString("_001_TooMuchInvocationsInside", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to namespace TestNamespace
+        ///{
+        ///    public class TestClass
+        ///    {
+        ///        public void Test()
+        ///        {
+        ///            _ = [|F1(F2(1, 2), F3(3, 4))|];
+        ///        }
+        ///
+        ///        public int F1(int a, int b) =&gt; throw null;
+        ///        public int F2(int c, int d) =&gt; throw null;
+        ///        public int F3(int e, int f) =&gt; throw null;
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string _001_TooMuchInvocationsInside_FIXED {
+            get {
+                return ResourceManager.GetString("_001_TooMuchInvocationsInside_FIXED", resourceCulture);
             }
         }
     }
