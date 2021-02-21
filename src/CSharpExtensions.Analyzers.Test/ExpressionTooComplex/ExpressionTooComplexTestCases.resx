@@ -121,4 +121,7 @@
   <data name="_001_TooMuchInvocationsInside" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\001_TooMuchInvocationsInside.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_001_TooMuchInvocationsInside_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\001_TooMuchInvocationsInside_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

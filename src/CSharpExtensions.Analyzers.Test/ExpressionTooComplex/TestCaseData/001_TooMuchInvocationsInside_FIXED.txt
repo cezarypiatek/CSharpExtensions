@@ -4,10 +4,11 @@
     {
         public void Test()
         {
-            _ = [|F1(F2(1, 2), 
-            F3(3, 4), 
-            F2(5, 6), 
-            F2(7, 8))|];
+            var a = F2(1, 2);
+            var b = F3(3, 4);
+            var extras1 = F2(5, 6);
+            var extras2 = F2(7, 8);
+            _ = F1(a, b, extras1, extras2);
         }
 
         public int F1(int a, int b, params int[] extras) => throw null;

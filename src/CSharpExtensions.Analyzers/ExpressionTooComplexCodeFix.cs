@@ -43,8 +43,7 @@ namespace CSharpExtensions.Analyzers
                     var argumentList = expression switch
                     {
                         InvocationExpressionSyntax invocationExpression => invocationExpression.ArgumentList,
-                        ObjectCreationExpressionSyntax objectCreationExpression =>
-                            objectCreationExpression.ArgumentList,
+                        ObjectCreationExpressionSyntax objectCreationExpression => objectCreationExpression.ArgumentList,
                         _ => null
                     };
 
@@ -52,17 +51,21 @@ namespace CSharpExtensions.Analyzers
                     {
                         var extractedVariables = new List<SyntaxNode>();
                         var newArguments = new List<ArgumentSyntax>();
-                        for (int i = 0; i < arguments.Count; i++)
+                        var parameterIndex = 0;
+                        for (int argumentIndex = 0; argumentIndex < arguments.Count; argumentIndex++)
                         {
-                            var argument = arguments[i];
+                            var argument = arguments[argumentIndex];
+                            var isParams = methodSymbol.Parameters[parameterIndex].IsParams;
+
                             if (ExpressionTooComplexAnalyzer.IsNonTrivialExpression(argument))
                             {
-                                var parameterName = methodSymbol.Parameters[i].Name;
+                                var parameterName = methodSymbol.Parameters[parameterIndex].Name;
+                                if (isParams)
+                                {
+                                    parameterName += (argumentIndex - parameterIndex + 1);
+                                }
 
-                                var extractedVariable = LocalDeclarationStatement(VariableDeclaration(IdentifierName("var")).WithVariables(
-                                    SingletonSeparatedList(VariableDeclarator(Identifier(parameterName))
-                                        .WithInitializer(EqualsValueClause(argument.Expression.WithAdditionalAnnotations(Formatter.Annotation))))));
-
+                                var extractedVariable = ExtractedVariable(parameterName, argument);
                                 extractedVariables.Add(extractedVariable);
                                 newArguments.Add(argument.WithExpression(IdentifierName(parameterName)));
                             }
@@ -70,8 +73,15 @@ namespace CSharpExtensions.Analyzers
                             {
                                 newArguments.Add(argument);
                             }
+
+                            
+                            if (isParams == false)
+                            {
+                                parameterIndex++;
+                            }
                         }
-                        var newExpression = expression.ReplaceNode(argumentList, argumentList.WithArguments(new SeparatedSyntaxList<ArgumentSyntax>().AddRange(newArguments)));
+                      
+                        var newExpression = expression.ReplaceNode(argumentList, ArgumentList(new SeparatedSyntaxList<ArgumentSyntax>().AddRange(newArguments)));
                         var rootStatement = expression.FirstAncestorOrSelf<StatementSyntax>();
                         extractedVariables.Add(rootStatement.ReplaceNode(expression, newExpression));
                         return await ReplaceNodes(contextDocument, rootStatement, extractedVariables, context.CancellationToken);
@@ -81,6 +91,13 @@ namespace CSharpExtensions.Analyzers
             }
 
             return contextDocument;
+        }
+
+        private static LocalDeclarationStatementSyntax ExtractedVariable(string parameterName, ArgumentSyntax argument)
+        {
+            return LocalDeclarationStatement(VariableDeclaration(IdentifierName("var")).WithVariables(
+                SingletonSeparatedList(VariableDeclarator(Identifier(parameterName))
+                    .WithInitializer(EqualsValueClause(argument.Expression.WithAdditionalAnnotations(Formatter.Annotation))))));
         }
 
         private static async Task<Document> ReplaceNodes(Document document, SyntaxNode oldNode, IReadOnlyList<SyntaxNode> newNodes, CancellationToken cancellationToken)
