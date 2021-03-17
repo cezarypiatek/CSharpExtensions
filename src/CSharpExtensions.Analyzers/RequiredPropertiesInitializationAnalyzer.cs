@@ -172,7 +172,7 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
+        public static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
         {
             if (objectInitialization?.Expressions == null)
             {

@@ -121,6 +121,9 @@
   <data name="_001_MissingPropertiesFullInitRequiredAttribute" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\001_MissingPropertiesFullInitRequiredAttribute.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_001_MissingPropertiesFullInitRequiredAttribute_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\001_MissingPropertiesFullInitRequiredAttribute_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="_002_MissingPropertiesFullInitRequiredAttributeInheritedy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\002_MissingPropertiesFullInitRequiredAttributeInheritedy.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -156,5 +159,11 @@
   </data>
   <data name="_013_DoNotReportMissingPropertiesForInitOnlyOptional" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\013_DoNotReportMissingPropertiesForInitOnlyOptional.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_014_MissingPropertiesFullInitRequiredAttributeAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\014_MissingPropertiesFullInitRequiredAttributeAll.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_014_MissingPropertiesFullInitRequiredAttributeAll_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\014_MissingPropertiesFullInitRequiredAttributeAll_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>
