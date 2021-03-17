@@ -104,6 +104,36 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
         ///    {
         ///        public void DoSomething()
         ///        {
+        ///            var user = new UserDTO()
+        ///            {
+        ///                FirstName = &quot;John&quot;,
+        ///                LastName = &quot;Doe&quot;,
+        ///                Age = default
+        ///            };
+        ///        }
+        ///    }
+        ///
+        ///    [InitRequired]
+        ///    public clas [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _001_MissingPropertiesFullInitRequiredAttribute_FIXED {
+            get {
+                return ResourceManager.GetString("_001_MissingPropertiesFullInitRequiredAttribute_FIXED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
         ///            var user = [|new UserDTO|]()
         ///            {
         ///                FirstName = &quot;John&quot;,
@@ -265,7 +295,8 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using System;
+        ///   Looks up a localized string similar to #nullable enable
+        ///using System;
         ///using System.Collections.Generic;
         ///using System.Text;
         ///using SmartAnalyzers.CSharpExtensions.Annotations;
@@ -286,7 +317,7 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
         ///    }
         ///
         ///    [InitRequired]
-        ///    public class Use [rest of string was truncated]&quot;;.
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _008_AllPropertiesAssigned {
             get {
@@ -440,6 +471,65 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
         internal static string _013_DoNotReportMissingPropertiesForInitOnlyOptional {
             get {
                 return ResourceManager.GetString("_013_DoNotReportMissingPropertiesForInitOnlyOptional", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = [|new UserDTO|]();
+        ///        }
+        ///    }
+        ///
+        ///    [InitRequired]
+        ///    public class UserDTO
+        ///    {
+        ///        public string FirstName { get; set; }
+        ///        public string LastName { get; set; }
+        ///        public int [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _014_MissingPropertiesFullInitRequiredAttributeAll {
+            get {
+                return ResourceManager.GetString("_014_MissingPropertiesFullInitRequiredAttributeAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = new UserDTO()
+        ///            {
+        ///                FirstName = deafult,
+        ///                LastName = default,
+        ///                Age = default
+        ///            };
+        ///        }
+        ///    }
+        ///
+        ///    [InitRequired]
+        ///    public c [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _014_MissingPropertiesFullInitRequiredAttributeAll_FIXED {
+            get {
+                return ResourceManager.GetString("_014_MissingPropertiesFullInitRequiredAttributeAll_FIXED", resourceCulture);
             }
         }
     }
