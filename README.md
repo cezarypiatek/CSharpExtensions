@@ -43,3 +43,19 @@ Include config file as `AdditionalFile` in `csproj`:
     <AdditionalFiles Include="CSharpExtensions.json" />
 </ItemGroup>
 ```
+
+## Migrating from Constructors to Initialization Blocks
+
+**Step 1:** Configure `CSharpExtensions` to report `CSE001` even when constructor invocation is present
+
+```json
+{
+  "CSE001": {
+    "SkipWhenConstructorUsed":  false 
+  } 
+}
+```
+
+**Step 2:** Execute `"Try to move initialization from constructor to init block"` CodeFix for `CSE001` occurrences.
+
+![](/doc/constructor_to_init.gif)

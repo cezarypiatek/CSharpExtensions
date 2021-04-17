@@ -1,0 +1,28 @@
+﻿using System;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace SimpleTest
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var x = new User[|("Cezary","Piątek","Home")|];
+            Console.WriteLine("Hello World!");
+        }
+    }
+
+
+    [InitRequired]
+    class User
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public User(string firstName, string lastName, string address)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+        }
+    }
+}
