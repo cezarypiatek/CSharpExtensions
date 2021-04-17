@@ -30,6 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="ConvertConstructorToInitBlock\CompleteInitializationBlockCodeFixTestsCases.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CompleteInitializationBlockCodeFixTestsCases.resx</DependentUpon>
+    </Compile>
     <Compile Update="ExpressionTooComplex\ExpressionTooComplexTestCases.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -63,6 +68,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="ConvertConstructorToInitBlock\CompleteInitializationBlockCodeFixTestsCases.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CompleteInitializationBlockCodeFixTestsCases.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="ExpressionTooComplex\ExpressionTooComplexTestCases.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExpressionTooComplexTestCases.Designer.cs</LastGenOutput>

@@ -10,6 +10,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace CSharpExtensions.Analyzers
 {
+    public class CSE001Settings
+    {
+        public bool SkipWhenConstructorUsed { get; set; } = true;
+    }
+
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class RequiredPropertiesInitializationAnalyzer : DiagnosticAnalyzer
     {
@@ -19,15 +24,22 @@ namespace CSharpExtensions.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RequiredPropertiesInitializationAnalyzer.Rule);
 
+        public CSE001Settings DefaultSettings { get; set; }
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(AnalyzeObjectCreationSyntax, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(AnalyzeObjectInitSyntax, SyntaxKind.ObjectInitializerExpression);
+            context.RegisterCompilationStartAction(compilationContext =>
+            {
+                var config =  DefaultSettings ?? compilationContext.Options.GetConfigFor<CSE001Settings>(DiagnosticId, compilationContext.CancellationToken);
+
+                compilationContext.RegisterSyntaxNodeAction(analysisContext => AnalyzeObjectCreationSyntax(analysisContext, config), SyntaxKind.ObjectCreationExpression);
+                compilationContext.RegisterSyntaxNodeAction(analysisContext => AnalyzeObjectInitSyntax(analysisContext, config), SyntaxKind.ObjectInitializerExpression);
+            });
+            
         }
 
-        private void AnalyzeObjectInitSyntax(SyntaxNodeAnalysisContext context)
+        private void AnalyzeObjectInitSyntax(SyntaxNodeAnalysisContext context, CSE001Settings cse001Settings)
         {
             var initializer = (InitializerExpressionSyntax)context.Node;
             if (initializer.Parent is AssignmentExpressionSyntax assignment && assignment.Left != null)
@@ -54,11 +66,11 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private void AnalyzeObjectCreationSyntax(SyntaxNodeAnalysisContext context)
+        private void AnalyzeObjectCreationSyntax(SyntaxNodeAnalysisContext context, CSE001Settings settings)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
 
-            if (objectCreation.ArgumentList?.Arguments.Any() == true)
+            if (objectCreation.ArgumentList?.Arguments.Any() == true && settings.SkipWhenConstructorUsed)
             {
                 return;
             }
