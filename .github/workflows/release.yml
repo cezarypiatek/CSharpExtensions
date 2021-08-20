@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/**'
       - '!src/.editorconfig'
+      - '!src/CSharpExtensions.Analyzers.Test/**'
 jobs:
   build-extension:
     runs-on: windows-latest
