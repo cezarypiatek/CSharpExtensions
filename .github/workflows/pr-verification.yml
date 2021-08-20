@@ -31,21 +31,12 @@ jobs:
       with:
         minor-pattern: '.*'
         output-to-env-variable: 'VersionPrefix'    
-    - name: Materialize Signing Key
-      id: write_sign_key_file
-      uses: timheuer/base64-to-file@v1
-      with:
-        fileName: 'CSharpExtensions.snk'
-        encodedString: ${{ secrets.SIGNING_KEY }}
     - name: Restore dependencies
       run: |
         dotnet nuget locals all --clear
         dotnet restore $env:SolutionPath         
     - name: Build extension
       run: dotnet build $env:SolutionPath 
-      env:
-        SignAssembly: true
-        AssemblyOriginatorKeyFile: ${{ steps.write_sign_key_file.outputs.filePath }}     
     - name: Test extension
       run: dotnet test --no-build --verbosity normal $env:SolutionPath   
     - name: Collect artifacts - nugets
