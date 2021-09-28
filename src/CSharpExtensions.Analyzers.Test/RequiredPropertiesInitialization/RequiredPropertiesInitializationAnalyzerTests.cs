@@ -11,7 +11,7 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization
     public class RequiredPropertiesInitializationAnalyzerTests : AnalyzerTestFixture
     {
         protected override string LanguageName => LanguageNames.CSharp;
-        protected override DiagnosticAnalyzer CreateAnalyzer() => new RequiredPropertiesInitializationAnalyzer();
+        protected override DiagnosticAnalyzer CreateAnalyzer() => new CSharpExtensions.Analyzers3.RequiredPropertiesInitializationAnalyzer();
 
         protected override IReadOnlyCollection<MetadataReference> References => new[]
         {

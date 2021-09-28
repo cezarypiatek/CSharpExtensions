@@ -13,7 +13,7 @@ namespace CSharpExtensions.Analyzers.Test.ConvertConstructorToInitBlock
     public class CompleteInitializationBlockCodeFixTests : CodeFixTestFixture
     {
         protected override string LanguageName => LanguageNames.CSharp;
-        protected override IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => new[] { new RequiredPropertiesInitializationAnalyzer()
+        protected override IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => new[] { new CSharpExtensions.Analyzers3.RequiredPropertiesInitializationAnalyzer()
         {
             DefaultSettings = new CSE001Settings()
             {

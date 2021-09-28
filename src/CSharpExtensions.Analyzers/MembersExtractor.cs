@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CSharpExtensions.Analyzers
 {
-    class MembersExtractor
+    public class MembersExtractor
     {
         private readonly Lazy<INamedTypeSymbol> _contextSymbol;
 
