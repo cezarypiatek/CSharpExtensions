@@ -29,6 +29,7 @@ jobs:
     - name: Calculate next version
       uses: cezarypiatek/NextVersionGeneratorAction@0.4
       with:
+        major-pattern: 'BREAKING CHANGES'
         minor-pattern: '.*'
         output-to-env-variable: 'VersionPrefix'    
     - name: Restore dependencies
