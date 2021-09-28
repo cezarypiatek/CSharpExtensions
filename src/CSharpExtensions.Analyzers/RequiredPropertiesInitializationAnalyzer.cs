@@ -93,15 +93,15 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private IEnumerable<ISymbol> GetMembersForRequiredInit(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel)
+        public static IEnumerable<ISymbol> GetMembersForRequiredInit(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel)
         {
             var membersExtractor = new MembersExtractor(semanticModel, objectCreation);
             if (IsInsideInitBlockWithFullInit(objectCreation) ||
                 SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitRequired) ||
                 SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitOnly))
             {
-               return membersExtractor.GetAllMembersThatCanBeInitialized(type)
-                   .Where(x => (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false) && (IsNullableMember(x) == false));
+                return membersExtractor.GetAllMembersThatCanBeInitialized(type)
+                    .Where(x => (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false) && (NullableHelper.IsNullableMember(x) == false));
             }
 
             var symbolCache = new SymbolHelperCache();
@@ -110,24 +110,7 @@ namespace CSharpExtensions.Analyzers
                 SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) ||
                 NonNullableShouldBeInitialized(memberSymbol, symbolCache));
         }
-
-        private bool IsNullableMember(ISymbol symbol) => symbol switch
-        {
-            IPropertySymbol property => IsNullable(property.Type),
-            IFieldSymbol field => IsNullable(field.Type),
-            _ => false
-        };
-
-        private bool IsNullable(ITypeSymbol type)
-        {
-            if (type.IsValueType && type.Name == "Nullable" && type.ContainingNamespace?.Name == "System")
-            {
-                return true;
-            }
-
-            return type.IsAnnotatedAsNullable() == true;
-        }
-
+        
         private static bool IsInsideInitBlockWithFullInit(ObjectCreationExpressionSyntax objectCreation)
         {
             if (IsMarkedWithComment(objectCreation, "FullInitRequired"))
@@ -155,38 +138,7 @@ namespace CSharpExtensions.Analyzers
         }
 
         private static bool NonNullableShouldBeInitialized(ISymbol member, SymbolHelperCache symbolHelperCache) => 
-            symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) && IsNotNullableReference(member);
-
-
-        private static readonly PropertyInfo? PropertyNullableAnnotation = typeof(IPropertySymbol).GetRuntimeProperty("NullableAnnotation");
-        private static readonly PropertyInfo? FieldNullableAnnotation = typeof(IFieldSymbol).GetRuntimeProperty("NullableAnnotation");
-
-        private static bool IsNotNullableReference(ISymbol symbol)
-        {
-            switch (symbol)
-            {
-                case IPropertySymbol property:
-                {
-                    if (property.Type.IsValueType)
-                    {
-                        return false;
-                    }
-                    var value = PropertyNullableAnnotation?.GetValue(property);
-                    return value != null && Convert.ToInt32(value) == 1;
-                }
-                case IFieldSymbol field:
-                {
-                    if (field.Type.IsValueType)
-                    {
-                        return false;
-                    }
-                    var value = FieldNullableAnnotation?.GetValue(field);
-                    return value != null && Convert.ToInt32(value) == 1;
-                }
-                default:
-                    return false;
-            }
-        }
+            symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) && NullableHelper.IsNotNullable(member);
 
         public static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
         {
