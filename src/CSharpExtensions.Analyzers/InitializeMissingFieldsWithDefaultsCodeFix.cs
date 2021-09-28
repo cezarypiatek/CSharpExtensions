@@ -36,8 +36,7 @@ namespace CSharpExtensions.Analyzers
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken);
             if (semanticModel.GetTypeInfo(objectCreation) is { Type: { } typeSymbol })
             {
-                var membersExtractor = new MembersExtractor(semanticModel, objectCreation);
-                var membersForInitialization = membersExtractor.GetAllMembersThatCanBeInitialized(typeSymbol).Select(x => x.Name).ToImmutableHashSet();
+                var membersForInitialization = RequiredPropertiesInitializationAnalyzer.GetMembersForRequiredInit(typeSymbol, objectCreation, semanticModel).Select(x => x.Name).ToImmutableHashSet();
                 var alreadyInitializedMembers = RequiredPropertiesInitializationAnalyzer.GetAlreadyInitializedMembers(objectCreation.Initializer);
                 var missingMembers = membersForInitialization.Except(alreadyInitializedMembers);
                 
