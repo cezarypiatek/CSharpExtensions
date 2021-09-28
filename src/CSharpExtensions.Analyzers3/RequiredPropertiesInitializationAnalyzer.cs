@@ -3,19 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using CSharpExtensions.Analyzers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CSharpExtensions.Analyzers
+namespace CSharpExtensions.Analyzers3
 {
-    public class CSE001Settings
-    {
-        public bool SkipWhenConstructorUsed { get; set; } = true;
-    }
-
-
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class RequiredPropertiesInitializationAnalyzer : DiagnosticAnalyzer
     {
@@ -32,15 +27,15 @@ namespace CSharpExtensions.Analyzers
             context.EnableConcurrentExecution();
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                if (LanguageFeaturesAvailability.ImplicitObjectCreation == false)
+                if (LanguageFeaturesAvailability.ImplicitObjectCreation)
                 {
                     var config = DefaultSettings ?? compilationContext.Options.GetConfigFor<CSE001Settings>(DiagnosticId, compilationContext.CancellationToken);
 
+                    compilationContext.RegisterSyntaxNodeAction(analysisContext => AnalyzeObjectCreationSyntax(analysisContext, config), SyntaxKind.ImplicitObjectCreationExpression);
                     compilationContext.RegisterSyntaxNodeAction(analysisContext => AnalyzeObjectCreationSyntax(analysisContext, config), SyntaxKind.ObjectCreationExpression);
                     compilationContext.RegisterSyntaxNodeAction(analysisContext => AnalyzeObjectInitSyntax(analysisContext, config), SyntaxKind.ObjectInitializerExpression);
                 }
             });
-            
         }
 
         private void AnalyzeObjectInitSyntax(SyntaxNodeAnalysisContext context, CSE001Settings cse001Settings)
@@ -49,7 +44,7 @@ namespace CSharpExtensions.Analyzers
             if (initializer.Parent is AssignmentExpressionSyntax { Left: { } } assignment)
             {
 
-                var annotatedParent = SyntaxHelper.FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(initializer.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
+                var annotatedParent = SyntaxHelper.FindNearestContainer<BaseObjectCreationExpressionSyntax, MethodDeclarationSyntax>(initializer.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
                 if (annotatedParent is null)
                 {
                     return;
@@ -72,16 +67,16 @@ namespace CSharpExtensions.Analyzers
 
         private void AnalyzeObjectCreationSyntax(SyntaxNodeAnalysisContext context, CSE001Settings settings)
         {
-            var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
+            var objectCreation = (BaseObjectCreationExpressionSyntax)context.Node;
 
             if (objectCreation.ArgumentList?.Arguments.Any() == true && settings.SkipWhenConstructorUsed)
             {
                 return;
             }
 
-            var typeInfo = context.SemanticModel.GetSymbolInfo(objectCreation.Type);
+            var typeInfo = context.SemanticModel.GetTypeInfo(objectCreation);
 
-            if (typeInfo.Symbol is ITypeSymbol type)
+            if (typeInfo.Type is ITypeSymbol type)
             {
                 var membersForInitialization = GetMembersForRequiredInit(type, objectCreation, context.SemanticModel).Select(x => x.Name).ToImmutableHashSet();
                 if (membersForInitialization.IsEmpty)
@@ -93,7 +88,7 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private IEnumerable<ISymbol> GetMembersForRequiredInit(ITypeSymbol type, ObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel)
+        private IEnumerable<ISymbol> GetMembersForRequiredInit(ITypeSymbol type, BaseObjectCreationExpressionSyntax objectCreation, SemanticModel semanticModel)
         {
             var membersExtractor = new MembersExtractor(semanticModel, objectCreation);
             if (IsInsideInitBlockWithFullInit(objectCreation) ||
@@ -128,20 +123,18 @@ namespace CSharpExtensions.Analyzers
             return type.IsAnnotatedAsNullable() == true;
         }
 
-        private static bool IsInsideInitBlockWithFullInit(ObjectCreationExpressionSyntax objectCreation)
+        private static bool IsInsideInitBlockWithFullInit(BaseObjectCreationExpressionSyntax objectCreation)
         {
             if (IsMarkedWithComment(objectCreation, "FullInitRequired"))
             {
                 return true;
             }
 
-            var annotatedParent = SyntaxHelper.FindNearestContainer<ObjectCreationExpressionSyntax, MethodDeclarationSyntax>(objectCreation.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
+            var annotatedParent = SyntaxHelper.FindNearestContainer<BaseObjectCreationExpressionSyntax, MethodDeclarationSyntax>(objectCreation.Parent, node => IsMarkedWithComment(node, "FullInitRequired:recursive"));
             return annotatedParent is null == false;
         }
 
-        private static void  TryToReportMissingMembers(SyntaxNodeAnalysisContext context,
-            InitializerExpressionSyntax initializer, ImmutableHashSet<string> membersForInitialization,
-            Location getLocation)
+        private static void  TryToReportMissingMembers(SyntaxNodeAnalysisContext context, InitializerExpressionSyntax initializer, ImmutableHashSet<string> membersForInitialization, Location getLocation)
         {
             var alreadyInitializedMembers = GetAlreadyInitializedMembers(initializer);
             var missingMembers = membersForInitialization.Except(alreadyInitializedMembers);
@@ -199,13 +192,13 @@ namespace CSharpExtensions.Analyzers
                 .OfType<IdentifierNameSyntax>().Select(x => x.Identifier.Text).ToImmutableHashSet();
         }
 
-        private static bool IsMarkedWithComment(ObjectCreationExpressionSyntax objectCreation, string marker)
+        private static bool IsMarkedWithComment(BaseObjectCreationExpressionSyntax objectCreation, string marker)
         {
             var trivia = GetTriviaBefore(objectCreation);
             return trivia.Count > 0 && trivia.Any(x => x.Kind() == SyntaxKind.MultiLineCommentTrivia && x.ToFullString().Contains(marker));
         }
 
-        private static SyntaxTriviaList GetTriviaBefore(ObjectCreationExpressionSyntax objectCreation)
+        private static SyntaxTriviaList GetTriviaBefore(BaseObjectCreationExpressionSyntax objectCreation)
         {
 
             if (objectCreation.NewKeyword.HasLeadingTrivia)

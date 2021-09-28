@@ -14,8 +14,8 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization
     public class InitializeMissingFieldsWithDefaultsCodeFixTests : CodeFixTestFixture
     {
         protected override string LanguageName { get; } = LanguageNames.CSharp;
-        protected override CodeFixProvider CreateProvider() => new InitializeMissingFieldsWithDefaultsCodeFix();
-        protected override IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => new[] { new RequiredPropertiesInitializationAnalyzer() };
+        protected override CodeFixProvider CreateProvider() => new CSharpExtensions.Analyzers3.InitializeMissingFieldsWithDefaultsCodeFix();
+        protected override IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => new[] { new CSharpExtensions.Analyzers3.RequiredPropertiesInitializationAnalyzer() };
         protected override IReadOnlyCollection<MetadataReference> References => new[]
         {
             ReferenceSource.FromType<TwinTypeAttribute>(),

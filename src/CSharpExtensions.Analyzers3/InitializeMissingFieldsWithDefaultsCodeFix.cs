@@ -8,9 +8,10 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CSharpExtensions.Analyzers;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace CSharpExtensions.Analyzers
+namespace CSharpExtensions.Analyzers3
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InitializeMissingFieldsWithDefaultsCodeFix)), Shared]
     public class InitializeMissingFieldsWithDefaultsCodeFix : CodeFixProvider
@@ -21,17 +22,17 @@ namespace CSharpExtensions.Analyzers
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            if (LanguageFeaturesAvailability.ImplicitObjectCreation == false)
+            if (LanguageFeaturesAvailability.ImplicitObjectCreation)
             {
                 var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-                if (root.FindNode(context.Span).FirstAncestorOrSelf<ObjectCreationExpressionSyntax>() is { } objectCreation)
+                if (root.FindNode(context.Span).FirstAncestorOrSelf<BaseObjectCreationExpressionSyntax>() is { } objectCreation)
                 {
                     context.RegisterCodeFix(CodeAction.Create("Initialize missing members with default", cancellationToken => CompleteTheInitializationBlock(context, objectCreation, cancellationToken)), context.Diagnostics.First());
                 }
             }
         }
 
-        private async Task<Document> CompleteTheInitializationBlock(CodeFixContext context, ObjectCreationExpressionSyntax objectCreation, CancellationToken cancellationToken)
+        private async Task<Document> CompleteTheInitializationBlock(CodeFixContext context, BaseObjectCreationExpressionSyntax objectCreation, CancellationToken cancellationToken)
         {
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken);
             if (semanticModel.GetTypeInfo(objectCreation) is { Type: { } typeSymbol })
@@ -62,8 +63,13 @@ namespace CSharpExtensions.Analyzers
         public static async Task<Document> ReplaceNodes(Document document, SyntaxNode oldNode, SyntaxNode newNode, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken);
-            var newRoot = root.ReplaceNode(oldNode, newNode);
-            return document.WithSyntaxRoot(newRoot);
+            if (root != null)
+            {
+                var newRoot = root.ReplaceNode(oldNode, newNode);
+                return document.WithSyntaxRoot(newRoot);
+            }
+
+            return document;
         }
     }
 }
