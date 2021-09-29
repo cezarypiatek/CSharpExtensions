@@ -97,5 +97,24 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization
         {
             this.NoDiagnostic(_013_DoNotReportMissingPropertiesForInitOnlyOptional, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
         }
+
+        [Test]
+        public void should_report_missing_init_when_mandatory_init_defined_on_assembly_level()
+        {
+            this.HasDiagnostic(_015_MandatoryInitImposedOnAssemblyLevel, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
+        }
+        
+        
+        [Test]
+        public void should_not_report_missing_init_when_member_explicitly_excluded()
+        {
+            this.NoDiagnostic(_016_ExcludeMembersFromMandatoryIniti, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
+        }
+        
+        [Test]
+        public void should_not_report_missing_init_when_type_explicitly_excluded()
+        {
+            this.NoDiagnostic(_017_ExcludeWholeTypeFromMandatoryIniti, RequiredPropertiesInitializationAnalyzer.DiagnosticId);
+        }
     }
 }

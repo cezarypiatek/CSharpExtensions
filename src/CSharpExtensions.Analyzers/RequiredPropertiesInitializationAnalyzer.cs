@@ -101,7 +101,9 @@ namespace CSharpExtensions.Analyzers
                 SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitOnly))
             {
                 return membersExtractor.GetAllMembersThatCanBeInitialized(type)
-                    .Where(x => (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false) && (NullableHelper.IsNullableMember(x) == false));
+                    .Where(x => (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false) &&
+                                (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOptional) == false) &&
+                                (NullableHelper.IsNullableMember(x) == false));
             }
 
             var symbolCache = new SymbolHelperCache();
@@ -110,7 +112,16 @@ namespace CSharpExtensions.Analyzers
                 SymbolHelper.IsMarkedWithAttribute(memberSymbol, SmartAnnotations.InitOnly) ||
                 NonNullableShouldBeInitialized(memberSymbol, symbolCache));
         }
-        
+
+        private static bool NonNullableShouldBeInitialized(ISymbol member, SymbolHelperCache symbolHelperCache) =>
+            symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) &&
+            (
+                SymbolHelper.IsMarkedWithAttribute(member.ContainingType, SmartAnnotations.InitOptional) == false &&
+                NullableHelper.IsNotNullable(member) &&
+                SymbolHelper.IsMarkedWithAttribute(member, SmartAnnotations.InitOptional) == false &&
+                SymbolHelper.IsMarkedWithAttribute(member, SmartAnnotations.InitOnlyOptional) == false
+            );
+
         private static bool IsInsideInitBlockWithFullInit(ObjectCreationExpressionSyntax objectCreation)
         {
             if (IsMarkedWithComment(objectCreation, "FullInitRequired"))
@@ -136,9 +147,6 @@ namespace CSharpExtensions.Analyzers
                 context.ReportDiagnostic(diagnostic);
             }
         }
-
-        private static bool NonNullableShouldBeInitialized(ISymbol member, SymbolHelperCache symbolHelperCache) => 
-            symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) && NullableHelper.IsNotNullable(member);
 
         public static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
         {
