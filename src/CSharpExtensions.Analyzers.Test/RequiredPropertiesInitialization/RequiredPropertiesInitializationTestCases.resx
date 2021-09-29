@@ -166,4 +166,13 @@
   <data name="_014_MissingPropertiesFullInitRequiredAttributeAll_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\014_MissingPropertiesFullInitRequiredAttributeAll_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_015_MandatoryInitImposedOnAssemblyLevel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\015_MandatoryInitImposedOnAssemblyLevel.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_016_ExcludeMembersFromMandatoryIniti" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\016_ExcludeMembersFromMandatoryIniti.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_017_ExcludeWholeTypeFromMandatoryIniti" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\017_ExcludeWholeTypeFromMandatoryIniti.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using CSharpExtensions.Analyzers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -97,7 +94,9 @@ namespace CSharpExtensions.Analyzers3
                 SymbolHelper.IsMarkedWithAttribute(type, SmartAnnotations.InitOnly))
             {
                return membersExtractor.GetAllMembersThatCanBeInitialized(type)
-                   .Where(x => (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false) && (NullableHelper.IsNullableMember(x) == false));
+                   .Where(x => (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOnlyOptional) == false) &&
+                               (SymbolHelper.IsMarkedWithAttribute(x, SmartAnnotations.InitOptional) == false) &&
+                               (NullableHelper.IsNullableMember(x) == false));
             }
 
             var symbolCache = new SymbolHelperCache();
@@ -132,7 +131,13 @@ namespace CSharpExtensions.Analyzers3
         }
 
         private static bool NonNullableShouldBeInitialized(ISymbol member, SymbolHelperCache symbolHelperCache) => 
-            symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) && NullableHelper.IsNotNullable(member);
+            symbolHelperCache.IsMarkedWithAttribute(member.ContainingAssembly, SmartAnnotations.InitRequiredForNotNull) && 
+                (
+                    SymbolHelper.IsMarkedWithAttribute(member.ContainingType, SmartAnnotations.InitOptional) == false &&
+                    NullableHelper.IsNotNullable(member) && 
+                    SymbolHelper.IsMarkedWithAttribute(member, SmartAnnotations.InitOptional) == false &&
+                    SymbolHelper.IsMarkedWithAttribute(member, SmartAnnotations.InitOnlyOptional) == false
+                 );
 
         public static ImmutableHashSet<string> GetAlreadyInitializedMembers(InitializerExpressionSyntax objectInitialization)
         {

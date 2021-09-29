@@ -1,0 +1,24 @@
+﻿[assembly:SmartAnalyzers.CSharpExtensions.Annotations.InitRequiredForNotNullAttribute]
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using SmartAnalyzers.CSharpExtensions.Annotations;
+
+    class Test
+    {
+        public void DoSomething()
+        {
+            var user = [|new UserDTO()|];
+        }
+    }
+
+    public class UserDTO
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Age { get; set; }
+    }
+}

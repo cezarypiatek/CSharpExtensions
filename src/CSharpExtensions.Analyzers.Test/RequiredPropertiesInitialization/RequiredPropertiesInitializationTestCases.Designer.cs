@@ -19,7 +19,7 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class RequiredPropertiesInitializationTestCases {
@@ -517,9 +517,9 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
         ///        {
         ///            var user = new UserDTO()
         ///            {
-        ///                FirstName = deafult,
-        ///                LastName = default,
-        ///                Age = default
+        ///                Age = default,
+        ///                FirstName = default,
+        ///                LastName = default
         ///            };
         ///        }
         ///    }
@@ -530,6 +530,92 @@ namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization {
         internal static string _014_MissingPropertiesFullInitRequiredAttributeAll_FIXED {
             get {
                 return ResourceManager.GetString("_014_MissingPropertiesFullInitRequiredAttributeAll_FIXED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [assembly:SmartAnalyzers.CSharpExtensions.Annotations.InitRequiredForNotNullAttribute]
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    using System;
+        ///    using System.Collections.Generic;
+        ///    using System.Text;
+        ///    using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = [|new UserDTO()|];
+        ///        }
+        ///    }
+        ///
+        ///    public class UserDTO
+        ///    {
+        ///        public string Fir [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _015_MandatoryInitImposedOnAssemblyLevel {
+            get {
+                return ResourceManager.GetString("_015_MandatoryInitImposedOnAssemblyLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [assembly:SmartAnalyzers.CSharpExtensions.Annotations.InitRequiredForNotNullAttribute]
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    using System;
+        ///    using System.Collections.Generic;
+        ///    using System.Text;
+        ///    using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = new UserDTO();
+        ///        }
+        ///    }
+        ///
+        ///    public class UserDTO
+        ///    {
+        ///        [InitOptional]
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _016_ExcludeMembersFromMandatoryIniti {
+            get {
+                return ResourceManager.GetString("_016_ExcludeMembersFromMandatoryIniti", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [assembly:SmartAnalyzers.CSharpExtensions.Annotations.InitRequiredForNotNullAttribute]
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///    using System;
+        ///    using System.Collections.Generic;
+        ///    using System.Text;
+        ///    using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///    class Test
+        ///    {
+        ///        public void DoSomething()
+        ///        {
+        ///            var user = new UserDTO();
+        ///        }
+        ///    }
+        ///
+        ///    [InitOptional]
+        ///    public class UserDTO
+        ///    {
+        ///        p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _017_ExcludeWholeTypeFromMandatoryIniti {
+            get {
+                return ResourceManager.GetString("_017_ExcludeWholeTypeFromMandatoryIniti", resourceCulture);
             }
         }
     }
