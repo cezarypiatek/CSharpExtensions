@@ -154,4 +154,10 @@
   <data name="_012_UnusedValueFromComplexExpression" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\012_UnusedValueFromComplexExpression.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_013_UnusedDirectDisposable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\013_UnusedDirectDisposable.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_014_UnusedInheritedDisposable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\014_UnusedInheritedDisposable.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

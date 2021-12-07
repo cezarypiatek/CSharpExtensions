@@ -18,14 +18,10 @@ namespace CSharpExtensions.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ReturnValueUnusedAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "CSE005";
-        internal static readonly LocalizableString Title = "Return value unused";
-        internal static readonly LocalizableString MessageFormat = "Use the return value or discard it explicitly";
-        internal const string Category = "CSharp Extensions";
+        public static DiagnosticDescriptor ReturnValueUnused = new DiagnosticDescriptor("CSE005", "Return value unused", "Use the return value or discard it explicitly", "CSharp Extensions", DiagnosticSeverity.Warning, true);
+        public static DiagnosticDescriptor ReturnDisposableValueUnused = new DiagnosticDescriptor("CSE007", "Return disposable value unused", "Handle disposal correctly", "CSharp Extensions", DiagnosticSeverity.Error, true);
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(ReturnValueUnused, ReturnDisposableValueUnused);
         
         public override void Initialize(AnalysisContext context)
         {
@@ -33,7 +29,7 @@ namespace CSharpExtensions.Analyzers
             context.EnableConcurrentExecution();
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var config = compilationContext.Options.GetConfigFor<CSE005Settings>(DiagnosticId, compilationContext.CancellationToken);
+                var config = compilationContext.Options.GetConfigFor<CSE005Settings>(ReturnValueUnused.Id, compilationContext.CancellationToken);
                 compilationContext.RegisterSyntaxNodeAction(ctx => AnalyzeSyntax(ctx, config), SyntaxKind.InvocationExpression, SyntaxKind.AwaitExpression, SyntaxKind.ObjectCreationExpression);
             });
         }
@@ -50,8 +46,15 @@ namespace CSharpExtensions.Analyzers
                         return;
                     }
 
-                    var diagnostic = Diagnostic.Create(Rule, expression.GetLocation());
+                    var diagnostic = Diagnostic.Create(ReturnValueUnused, expression.GetLocation());
                     ctx.ReportDiagnostic(diagnostic);
+
+
+                    if (type.Interfaces.Any(x => x.Name is "IDisposable" or "IAsyncDisposable"))
+                    {
+                        var disposableDiagnostic = Diagnostic.Create(ReturnDisposableValueUnused, expression.GetLocation());
+                        ctx.ReportDiagnostic(disposableDiagnostic);
+                    }
                 }
             }
         }

@@ -18,6 +18,7 @@ Articles that explain implemented concepts:
 |CSE004| Member with InitOnlyOptional requires default value| `[InitOnlyOptional]` ||
 |CSE005| Return value unused | | [link](https://cezarypiatek.github.io/post/pure-functions-and-unused-return-value/)|
 |CSE006| Expression too complex | | |
+|CSE007| Return disposable value unused | | Same as `SE005` but tracks only `IDisposable` and `IAsyncDisposable` values |
 
 
 ## Configuration

@@ -1,0 +1,14 @@
+﻿using System;
+
+namespace TestNamespace
+{
+    class SampleClass
+    {
+        public void Test()
+        {
+            [|DoSomething()|];
+        }
+
+        public IDisposable DoSomething() => throw new NotImplementedException();
+    }
+}

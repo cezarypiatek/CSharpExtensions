@@ -19,7 +19,7 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ReturnValueUnusedTestsTestCases {
@@ -324,6 +324,57 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused {
         internal static string _012_UnusedValueFromComplexExpression {
             get {
                 return ResourceManager.GetString("_012_UnusedValueFromComplexExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public void Test()
+        ///        {
+        ///            [|DoSomething()|];
+        ///        }
+        ///
+        ///        public MyResource DoSomething() =&gt; throw new NotImplementedException();
+        ///    }
+        ///
+        ///    class MyResource: IDisposable
+        ///    {
+        ///        public void Dispose()  =&gt; throw new NotImplementedException();
+        ///    }
+        ///}
+        ///.
+        /// </summary>
+        internal static string _013_UnusedDirectDisposable {
+            get {
+                return ResourceManager.GetString("_013_UnusedDirectDisposable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public void Test()
+        ///        {
+        ///            [|DoSomething()|];
+        ///        }
+        ///
+        ///        public IDisposable DoSomething() =&gt; throw new NotImplementedException();
+        ///    }
+        ///}
+        ///.
+        /// </summary>
+        internal static string _014_UnusedInheritedDisposable {
+            get {
+                return ResourceManager.GetString("_014_UnusedInheritedDisposable", resourceCulture);
             }
         }
     }
