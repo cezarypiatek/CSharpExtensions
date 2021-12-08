@@ -339,12 +339,7 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused {
         ///            [|DoSomething()|];
         ///        }
         ///
-        ///        public MyResource DoSomething() =&gt; throw new NotImplementedException();
-        ///    }
-        ///
-        ///    class MyResource: IDisposable
-        ///    {
-        ///        public void Dispose()  =&gt; throw new NotImplementedException();
+        ///        public IDisposable DoSomething() =&gt; throw new NotImplementedException();
         ///    }
         ///}
         ///.
@@ -367,14 +362,106 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused {
         ///            [|DoSomething()|];
         ///        }
         ///
-        ///        public IDisposable DoSomething() =&gt; throw new NotImplementedException();
+        ///        public MyResource DoSomething() =&gt; throw new NotImplementedException();
         ///    }
-        ///}
-        ///.
+        ///
+        ///    class MyResource: IDisposable
+        ///    {
+        ///        public void Dispose()  =&gt; throw new NotImplementedException();
+        ///    }
+        ///}.
         /// </summary>
         internal static string _014_UnusedInheritedDisposable {
             get {
                 return ResourceManager.GetString("_014_UnusedInheritedDisposable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public void Test()
+        ///        {
+        ///            [|DoSomething()|];
+        ///        }
+        ///
+        ///        public MyResource DoSomething() =&gt; throw new NotImplementedException();
+        ///    }
+        ///
+        ///    interface IMyResource :IDisposable {}
+        ///
+        ///    class MyResource: IMyResource
+        ///    {
+        ///        public void Dispose()  =&gt; throw new NotImplementedException();
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string _015_UnusedInheritedInterfaceDisposable {
+            get {
+                return ResourceManager.GetString("_015_UnusedInheritedInterfaceDisposable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public void Test()
+        ///        {
+        ///            [|DoSomething()|];
+        ///        }
+        ///
+        ///        public IMyResource DoSomething() =&gt; throw new NotImplementedException();
+        ///    }
+        ///
+        ///    interface IMyResource :IDisposable {}
+        ///
+        ///    class MyResource: IMyResource
+        ///    {
+        ///        public void Dispose()  =&gt; throw new NotImplementedException();
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string _016_UnusedInheritedInterfaceWhenReturningInterfaceDisposable {
+            get {
+                return ResourceManager.GetString("_016_UnusedInheritedInterfaceWhenReturningInterfaceDisposable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public async Task Test()
+        ///        {
+        ///            await [|DoSomething()|];
+        ///        }
+        ///
+        ///        public Task&lt;IMyResource&gt; DoSomething() =&gt; throw new NotImplementedException();
+        ///    }
+        ///
+        ///    interface IMyResource :IDisposable {}
+        ///
+        ///    class MyResource: IMyResource
+        ///    {
+        ///        public void Dispose()  =&gt; throw new NotImplementedException();
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string _017_UnusedInheritedInterfaceDisposableAwait {
+            get {
+                return ResourceManager.GetString("_017_UnusedInheritedInterfaceDisposableAwait", resourceCulture);
             }
         }
     }

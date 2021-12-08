@@ -160,4 +160,13 @@
   <data name="_014_UnusedInheritedDisposable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\014_UnusedInheritedDisposable.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="_015_UnusedInheritedInterfaceDisposable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\015_UnusedInheritedInterfaceDisposable.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_016_UnusedInheritedInterfaceWhenReturningInterfaceDisposable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\016_UnusedInheritedInterfaceWhenReturningInterfaceDisposable.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_017_UnusedInheritedInterfaceDisposableAwait" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\017_UnusedInheritedInterfaceDisposableAwait.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

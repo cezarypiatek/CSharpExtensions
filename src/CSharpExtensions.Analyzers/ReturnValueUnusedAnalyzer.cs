@@ -49,8 +49,7 @@ namespace CSharpExtensions.Analyzers
                     var diagnostic = Diagnostic.Create(ReturnValueUnused, expression.GetLocation());
                     ctx.ReportDiagnostic(diagnostic);
 
-
-                    if (type.Interfaces.Any(x => x.Name is "IDisposable" or "IAsyncDisposable"))
+                    if (IsDisposable(type) || type.AllInterfaces.Any(IsDisposable))
                     {
                         var disposableDiagnostic = Diagnostic.Create(ReturnDisposableValueUnused, expression.GetLocation());
                         ctx.ReportDiagnostic(disposableDiagnostic);
@@ -58,5 +57,7 @@ namespace CSharpExtensions.Analyzers
                 }
             }
         }
+
+        private static bool IsDisposable(ITypeSymbol x) => x.Name is "IDisposable" or "IAsyncDisposable";
     }
 }

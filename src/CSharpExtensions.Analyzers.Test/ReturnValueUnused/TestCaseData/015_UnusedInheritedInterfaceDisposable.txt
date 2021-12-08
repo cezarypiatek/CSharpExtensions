@@ -12,7 +12,9 @@ namespace TestNamespace
         public MyResource DoSomething() => throw new NotImplementedException();
     }
 
-    class MyResource: IDisposable
+    interface IMyResource :IDisposable {}
+
+    class MyResource: IMyResource
     {
         public void Dispose()  => throw new NotImplementedException();
     }
