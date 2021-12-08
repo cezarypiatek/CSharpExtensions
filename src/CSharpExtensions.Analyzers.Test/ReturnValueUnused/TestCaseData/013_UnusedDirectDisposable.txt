@@ -9,11 +9,6 @@ namespace TestNamespace
             [|DoSomething()|];
         }
 
-        public MyResource DoSomething() => throw new NotImplementedException();
-    }
-
-    class MyResource: IDisposable
-    {
-        public void Dispose()  => throw new NotImplementedException();
+        public IDisposable DoSomething() => throw new NotImplementedException();
     }
 }

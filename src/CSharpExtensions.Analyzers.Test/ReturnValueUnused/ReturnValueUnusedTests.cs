@@ -87,14 +87,32 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused
         [Test]
         public void should_report_unused_disposable_result()
         {
-            NoDiagnostic(ReturnValueUnusedTestsTestCases._013_UnusedDirectDisposable, ReturnValueUnusedAnalyzer.ReturnDisposableValueUnused.Id);
+            HasDiagnostic(ReturnValueUnusedTestsTestCases._013_UnusedDirectDisposable, ReturnValueUnusedAnalyzer.ReturnDisposableValueUnused.Id);
         }
         
         
         [Test]
         public void should_report_unused_disposable_for_inherited_result()
         {
-            NoDiagnostic(ReturnValueUnusedTestsTestCases._014_UnusedInheritedDisposable, ReturnValueUnusedAnalyzer.ReturnDisposableValueUnused.Id);
+            HasDiagnostic(ReturnValueUnusedTestsTestCases._014_UnusedInheritedDisposable, ReturnValueUnusedAnalyzer.ReturnDisposableValueUnused.Id);
+        }
+        
+        [Test]
+        public void should_report_unused_disposable_for_inherited_interface_result()
+        {
+            HasDiagnostic(ReturnValueUnusedTestsTestCases._015_UnusedInheritedInterfaceDisposable, ReturnValueUnusedAnalyzer.ReturnDisposableValueUnused.Id);
+        }
+        
+        [Test]
+        public void should_report_unused_disposable_for_inherited_interface_while_returning_interface()
+        {
+            HasDiagnostic(ReturnValueUnusedTestsTestCases._016_UnusedInheritedInterfaceWhenReturningInterfaceDisposable, ReturnValueUnusedAnalyzer.ReturnDisposableValueUnused.Id);
+        }
+        
+        [Test]
+        public void should_report_unused_disposable_for_inherited_interface_and_tasks()
+        {
+            HasDiagnostic(ReturnValueUnusedTestsTestCases._017_UnusedInheritedInterfaceDisposableAwait, ReturnValueUnusedAnalyzer.ReturnDisposableValueUnused.Id);
         }
     }
 }
