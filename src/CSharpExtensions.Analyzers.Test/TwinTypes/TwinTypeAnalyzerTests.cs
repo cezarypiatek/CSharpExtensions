@@ -18,7 +18,8 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         protected override IReadOnlyCollection<MetadataReference> References => new[]
         {
             ReferenceSource.FromType<TwinTypeAttribute>(),
-            MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.0.0.0").Location)
+            MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.1.0.0").Location),
+            MetadataReference.CreateFromFile(Assembly.Load("System.Runtime, Version=6.0.0.0").Location)
         };
 
         [Test]
@@ -61,7 +62,8 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         protected override IReadOnlyCollection<MetadataReference> References => new[]
         {
             ReferenceSource.FromType<TwinTypeAttribute>(),
-            MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.0.0.0").Location)
+            MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.1.0.0").Location),
+            MetadataReference.CreateFromFile(Assembly.Load("System.Runtime, Version=6.0.0.0").Location)
         };
 
 

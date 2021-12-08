@@ -7,6 +7,6 @@
             [|DoSomething()|];
         }
 
-        public int DoSomething() => 1;
+        public void DoSomething() => throw null;
     }
 }

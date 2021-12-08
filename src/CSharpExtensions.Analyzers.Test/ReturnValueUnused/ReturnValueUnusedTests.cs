@@ -19,7 +19,7 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused
         [Test]
         public void should_not_report_unused_return_value_from_void_method()
         {
-            NoDiagnostic(ReturnValueUnusedTestsTestCases._002_VoidReturnMethod, ReturnValueUnusedAnalyzer.ReturnValueUnused.Id);
+            NoDiagnosticAtMarker(ReturnValueUnusedTestsTestCases._002_VoidReturnMethod, ReturnValueUnusedAnalyzer.ReturnValueUnused.Id);
         }
         
         [Test]
@@ -80,7 +80,7 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused
         [Test]
         public void should_report_unused_result_from_complex_expression()
         {
-            NoDiagnostic(ReturnValueUnusedTestsTestCases._012_UnusedValueFromComplexExpression, ReturnValueUnusedAnalyzer.ReturnValueUnused.Id);
+            HasDiagnostic(ReturnValueUnusedTestsTestCases._012_UnusedValueFromComplexExpression, ReturnValueUnusedAnalyzer.ReturnValueUnused.Id);
         }
         
         
