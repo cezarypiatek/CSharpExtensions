@@ -22,19 +22,16 @@ jobs:
         PackageReleaseNotes: 'https://github.com/${{ github.repository }}/releases'
     steps:
     - uses: actions/checkout@v2   
-    - name: Setup .NET Core 5
+    - name: Setup .NET Core 6
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '5.0'   
-    - name: Setup .NET Core 3.1
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1.x'   
+        dotnet-version: '6.0'
     - name: Calculate next version
       uses: cezarypiatek/NextVersionGeneratorAction@0.4
       with:
+        patch-pattern: '.*'
+        minor-pattern: '^(?!(Fix|Tech))/i'
         major-pattern: 'BREAKING CHANGES'
-        minor-pattern: '.*'
         output-to-env-variable: 'Version'    
     - name: Materialize Signing Key
       id: write_sign_key_file
