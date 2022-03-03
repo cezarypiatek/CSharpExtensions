@@ -91,7 +91,7 @@ namespace CSharpExtensions.Analyzers
 
                 return expression switch
                 {
-                    ObjectCreationExpressionSyntax objectCreation => objectCreation.ArgumentList.Arguments.Count,
+                    ObjectCreationExpressionSyntax objectCreation => objectCreation.ArgumentList?.Arguments.Count ?? 0 + objectCreation.Initializer?.Expressions.Count ?? 0,
                     AwaitExpressionSyntax => 2,
                     ConditionalExpressionSyntax => 3,
                     BinaryExpressionSyntax binaryExpression => GetScoreForBinary(binaryExpression),
