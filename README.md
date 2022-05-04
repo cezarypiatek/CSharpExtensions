@@ -60,3 +60,13 @@ Include config file as `AdditionalFile` in `csproj`:
 **Step 2:** Execute `"Try to move initialization from constructor to init block"` CodeFix for `CSE001` occurrences.
 
 ![](/doc/constructor_to_init.gif)
+
+## Init-related attributes vs [init keyword](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/init) (C# 9+ feature)
+
+|Feature | Required in init block | Can be modified outside init block| Application level|
+|----|----|---|---|
+| `init` keyword | NO | NO| Property|
+|`[InitRequired]`| YES | YES | Property. Class|
+|`[InitOnly]`| YES | NO | Property. Class|
+|`[InitOnlyOptional]`| NO | NO | Property. Class|
+|`[InitRequiredForNotNull]`| YES for non-null references and not `Nullable<T>` | YES | assembly|
