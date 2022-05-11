@@ -90,7 +90,8 @@ namespace CSharpExtensions.Analyzers
             return membersExtractor.GetAllAccessibleMembers(namedType, x => x switch
                 {
                     IPropertySymbol property => property.IsStatic == false && property.IsIndexer == false,
-                    IFieldSymbol field => field.IsImplicitlyDeclared == false && field.IsStatic == false,
+                    IFieldSymbol field when namedType.TypeKind == TypeKind.Enum => field.IsImplicitlyDeclared == false,
+                    IFieldSymbol field when namedType.TypeKind != TypeKind.Enum => field.IsImplicitlyDeclared == false && field.IsStatic == false,
                     _ => false
                 })
                 .Select(x =>new MemberSymbolInfo(x, namePrefix))

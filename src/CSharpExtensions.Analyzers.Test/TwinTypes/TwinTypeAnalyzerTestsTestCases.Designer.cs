@@ -19,7 +19,7 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class TwinTypeAnalyzerTestsTestCases {
@@ -73,13 +73,13 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///    public class [|UserDTO|]
         ///    {
         ///        public string FirstName { get; set; }
-        ///        public string LastName { get; set; }        
+        ///        public string LastName { get; set; }
         ///    }
         ///    
         ///    public class UserEntity
         ///    {
         ///        public string FirstName { get; set; }
-        ///        public string La [rest of string was truncated]&quot;;.
+        ///        public string LastName { [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _001_MissingProperties {
             get {
@@ -100,13 +100,13 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///    public class [|UserDTO|]
         ///    {
         ///        public string FirstName { get; set; }
-        ///        public string LastName { get; set; }        
+        ///        public string LastName { get; set; }
         ///    }
         ///    
         ///    public class UserEntity
         ///    {
         ///        public string FirstName { get; set; }
-        ///        public string La [rest of string was truncated]&quot;;.
+        ///        public string LastName { [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _002_MissingFields {
             get {
@@ -156,10 +156,10 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///        public int Id { get; set; }
         ///        public int Version { get; set; }
         ///        public string FirstName { get; set; }
-        ///        public string LastName { get; set; }        
+        ///        public string LastName { get; set; }
         ///    }
         ///    
-        ///    public class UserEntity: Bas [rest of string was truncated]&quot;;.
+        ///    public class UserEntity: BaseEntity        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _004_NoMissingProperties {
             get {
@@ -207,12 +207,11 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///    public class UserDTO
         ///    {
         ///        public string FirstName { get; set; }
-        ///        int Age { get; set; }
-        ///        string FullName { get; set; }
-        ///        int Id { get; set; }
-        ///        string LastName { get; set; }
-        ///        int Version { get; set; }
-        ///     [rest of string was truncated]&quot;;.
+        ///        public int Age { get; set; }
+        ///        public string FullName { get; set; }
+        ///        public int Id { get; set; }
+        ///        public string LastName { get; set; }
+        ///        pub [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _005_MissingMembersForFIx_FIXED {
             get {
@@ -283,9 +282,8 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///    {
         ///        public string FirstName { get; set; }
         ///        public string LastName { get; set; }
-        ///        string MainAddressBuildingNo { get; set; }
-        ///        string MainAddressFlatNo { get; set; }
-        ///  [rest of string was truncated]&quot;;.
+        ///        public string MainAddressBuildingNo { get; set; }
+        ///        public string MainAddressFlatNo {  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _007_PropertiesWithPrefixForFix_FIXED {
             get {
@@ -333,11 +331,41 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///    {
         ///        public string FirstName { get; set; }
         ///        public string LastName { get; set; }
-        ///        string ShippingAddress [rest of string was truncated]&quot;;.
+        ///        public string Shipping [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _008_PropertiesWithPrefixWithTwoTwinsForFix_FIXED {
             get {
                 return ResourceManager.GetString("_008_PropertiesWithPrefixWithTwoTwinsForFix_FIXED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(UserEntity))]
+        ///    public enum SampleEnum
+        ///    {
+        ///        Option1
+        ///    }
+        ///    
+        ///    public enum SampleTwinEnum
+        ///    {
+        ///        Option1,
+        ///        Option2,
+        ///        Option3
+        ///    }
+        ///}
+        ///.
+        /// </summary>
+        internal static string _009_MissingFieldsForEnum {
+            get {
+                return ResourceManager.GetString("_009_MissingFieldsForEnum", resourceCulture);
             }
         }
     }

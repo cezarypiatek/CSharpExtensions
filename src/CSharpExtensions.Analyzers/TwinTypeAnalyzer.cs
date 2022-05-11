@@ -24,7 +24,7 @@ namespace CSharpExtensions.Analyzers
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if(context.Symbol is INamedTypeSymbol namedType && (namedType.TypeKind == TypeKind.Class || namedType.TypeKind == TypeKind.Struct))
+            if(context.Symbol is INamedTypeSymbol namedType && (namedType.TypeKind == TypeKind.Class || namedType.TypeKind == TypeKind.Struct || namedType.TypeKind == TypeKind.Enum))
             {
                 foreach (var twinType in SymbolHelper.GetTwinTypes(namedType))
                 {

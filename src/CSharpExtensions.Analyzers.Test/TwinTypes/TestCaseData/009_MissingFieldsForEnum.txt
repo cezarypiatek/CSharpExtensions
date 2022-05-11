@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+
+    [TwinType(typeof(SampleTwinEnum))]
+    public enum [|SampleEnum|]
+    {
+        Option1
+    }
+    
+    public enum SampleTwinEnum
+    {
+        Option1,
+        Option2,
+        Option3
+    }
+}

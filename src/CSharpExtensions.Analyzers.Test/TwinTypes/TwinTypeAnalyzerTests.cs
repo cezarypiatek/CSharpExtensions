@@ -33,6 +33,12 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         {
             HasDiagnostic(TwinTypeAnalyzerTestsTestCases._002_MissingFields, TwinTypeAnalyzer.DiagnosticId);
         }
+        
+        [Test]
+        public void should_report_missing_fields_for_enum()
+        {
+            HasDiagnostic(TwinTypeAnalyzerTestsTestCases._009_MissingFieldsForEnum, TwinTypeAnalyzer.DiagnosticId);
+        }
 
         [Test]
         public void should_report_missing_inherited_properties()
