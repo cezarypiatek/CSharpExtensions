@@ -20,7 +20,7 @@ namespace CSharpExtensions.Analyzers
         {
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken);
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var typeDeclaration = root.FindNode(context.Span).FirstAncestorOrSelf<TypeDeclarationSyntax>();
+            var typeDeclaration = root.FindNode(context.Span).FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             
             if (typeDeclaration is {} && ModelExtensions.GetDeclaredSymbol(semanticModel, typeDeclaration) is INamedTypeSymbol namedType)
             {
@@ -47,11 +47,16 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private async Task<Document> AddMissingMembers(Document contextDocument, INamedTypeSymbol namedType, TypeDeclarationSyntax typeDeclaration, TwinTypeInfo twinTypeInfo, CancellationToken token)
+        private async Task<Document> AddMissingMembers(Document contextDocument, INamedTypeSymbol namedType, BaseTypeDeclarationSyntax typeDeclaration, TwinTypeInfo twinTypeInfo, CancellationToken token)
         {
             var syntaxGenerator = SyntaxGenerator.GetGenerator(contextDocument);
             var newMembers =  CreateMissingMembers(namedType, twinTypeInfo, syntaxGenerator).ToArray();
-            var newType = typeDeclaration.AddMembers(newMembers);
+            var newType = typeDeclaration switch
+            {
+                TypeDeclarationSyntax td => td.AddMembers(newMembers),
+                EnumDeclarationSyntax ed => ed.AddMembers(newMembers.OfType<EnumMemberDeclarationSyntax>().ToArray()),
+                _ => typeDeclaration
+            };
             return await ReplaceNodes(contextDocument, typeDeclaration, newType, token);
         }
 
@@ -73,7 +78,11 @@ namespace CSharpExtensions.Analyzers
                 }
                 else if (missingMember.Symbol is IFieldSymbol fieldSymbol)
                 {
-                    yield return CreateAutoProperty(syntaxGenerator, missingMember.ExpectedName, fieldSymbol.Type);
+                    if (namedType.TypeKind == TypeKind.Enum)
+                    {
+                        yield return (EnumMemberDeclarationSyntax)syntaxGenerator.EnumMember(fieldSymbol.Name).WithAdditionalAnnotations(Formatter.Annotation);
+                    }
+                    else yield return CreateAutoProperty(syntaxGenerator, missingMember.ExpectedName, fieldSymbol.Type);
                 }
             }
         }
