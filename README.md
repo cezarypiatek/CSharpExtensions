@@ -19,6 +19,7 @@ Articles that explain implemented concepts:
 |CSE005| Return value unused | | [link](https://cezarypiatek.github.io/post/pure-functions-and-unused-return-value/)|
 |CSE006| Expression too complex | | |
 |CSE007| Return disposable value unused | | Same as `SE005` but tracks only `IDisposable` and `IAsyncDisposable` values |
+|CSE008| Return async result unused | | Same as `SE005` but tracks only `IAsyncResult` (`Task`, `ValueTask`) values |
 
 
 ## Configuration

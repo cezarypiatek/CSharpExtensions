@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -18,10 +17,11 @@ namespace CSharpExtensions.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ReturnValueUnusedAnalyzer : DiagnosticAnalyzer
     {
-        public static DiagnosticDescriptor ReturnValueUnused = new DiagnosticDescriptor("CSE005", "Return value unused", "Use the return value or discard it explicitly", "CSharp Extensions", DiagnosticSeverity.Warning, true);
-        public static DiagnosticDescriptor ReturnDisposableValueUnused = new DiagnosticDescriptor("CSE007", "Return disposable value unused", "Handle disposal correctly", "CSharp Extensions", DiagnosticSeverity.Error, true);
+        public static readonly DiagnosticDescriptor ReturnValueUnused = new DiagnosticDescriptor("CSE005", "Return value unused", "Use the return value or discard it explicitly", "CSharp Extensions", DiagnosticSeverity.Warning, true);
+        public static readonly DiagnosticDescriptor ReturnDisposableValueUnused = new DiagnosticDescriptor("CSE007", "Return disposable value unused", "Handle disposal correctly", "CSharp Extensions", DiagnosticSeverity.Error, true);
+        public static readonly DiagnosticDescriptor ReturnAsyncResultUnused = new DiagnosticDescriptor("CSE008", "Return async result unused", "Handle async result correctly", "CSharp Extensions", DiagnosticSeverity.Error, true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(ReturnValueUnused, ReturnDisposableValueUnused);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(ReturnValueUnused, ReturnDisposableValueUnused, ReturnAsyncResultUnused);
         
         public override void Initialize(AnalysisContext context)
         {
@@ -45,9 +45,15 @@ namespace CSharpExtensions.Analyzers
                     {
                         return;
                     }
-
                     var diagnostic = Diagnostic.Create(ReturnValueUnused, expression.GetLocation());
                     ctx.ReportDiagnostic(diagnostic);
+
+                    if (IsAsyncResult(type) || type.AllInterfaces.Any(IsAsyncResult))
+                    {
+                        var asyncResultDiagnostic = Diagnostic.Create(ReturnAsyncResultUnused, expression.GetLocation());
+                        ctx.ReportDiagnostic(asyncResultDiagnostic);
+
+                    }
 
                     if (IsDisposable(type) || type.AllInterfaces.Any(IsDisposable))
                     {
@@ -59,5 +65,6 @@ namespace CSharpExtensions.Analyzers
         }
 
         private static bool IsDisposable(ITypeSymbol x) => x.Name is "IDisposable" or "IAsyncDisposable";
+        private static bool IsAsyncResult(ITypeSymbol x) => x.Name is "IAsyncResult";
     }
 }

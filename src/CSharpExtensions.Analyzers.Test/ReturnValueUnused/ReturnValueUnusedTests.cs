@@ -114,5 +114,17 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused
         {
             HasDiagnostic(ReturnValueUnusedTestsTestCases._017_UnusedInheritedInterfaceDisposableAwait, ReturnValueUnusedAnalyzer.ReturnDisposableValueUnused.Id);
         }
+
+        [Test]
+        public void should_report_unused_un_awaited_async_result()
+        {
+            HasDiagnostic(ReturnValueUnusedTestsTestCases._018_UnusedAsyncResult, ReturnValueUnusedAnalyzer.ReturnAsyncResultUnused.Id);
+        }
+        
+        [Test]
+        public void should_not_report_awaited_async_result()
+        {
+            NoDiagnostic(ReturnValueUnusedTestsTestCases._019_AwaitedAsyncResult, ReturnValueUnusedAnalyzer.ReturnAsyncResultUnused.Id);
+        }
     }
 }

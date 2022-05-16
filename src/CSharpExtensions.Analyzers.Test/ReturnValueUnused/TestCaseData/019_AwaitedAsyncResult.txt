@@ -1,0 +1,13 @@
+﻿using System;
+using System.Threading.Tasks;
+
+namespace TestNamespace
+{
+    class SampleClass
+    {
+        public async Task Test()
+        {
+            await [|Task.Delay(10)|];
+        }
+    }
+}
