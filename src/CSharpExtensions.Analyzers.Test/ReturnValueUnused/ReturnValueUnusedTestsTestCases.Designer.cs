@@ -92,7 +92,7 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused {
         ///            [|DoSomething()|];
         ///        }
         ///
-        ///        public int DoSomething() =&gt; 1;
+        ///        public void DoSomething() =&gt; throw null;
         ///    }
         ///}
         ///.
@@ -462,6 +462,48 @@ namespace CSharpExtensions.Analyzers.Test.ReturnValueUnused {
         internal static string _017_UnusedInheritedInterfaceDisposableAwait {
             get {
                 return ResourceManager.GetString("_017_UnusedInheritedInterfaceDisposableAwait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public async Task Test()
+        ///        {
+        ///            [|Task.Delay(10)|];
+        ///        }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string _018_UnusedAsyncResult {
+            get {
+                return ResourceManager.GetString("_018_UnusedAsyncResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public async Task Test()
+        ///        {
+        ///            await [|Task.Delay(10)|];
+        ///        }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string _019_AwaitedAsyncResult {
+            get {
+                return ResourceManager.GetString("_019_AwaitedAsyncResult", resourceCulture);
             }
         }
     }
