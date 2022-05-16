@@ -54,8 +54,7 @@ namespace CSharpExtensions.Analyzers
                         ctx.ReportDiagnostic(asyncResultDiagnostic);
 
                     }
-
-                    if (IsDisposable(type) || type.AllInterfaces.Any(IsDisposable))
+                    else if (IsDisposable(type) || type.AllInterfaces.Any(IsDisposable))
                     {
                         var disposableDiagnostic = Diagnostic.Create(ReturnDisposableValueUnused, expression.GetLocation());
                         ctx.ReportDiagnostic(disposableDiagnostic);
