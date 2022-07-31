@@ -20,6 +20,7 @@ Articles that explain implemented concepts:
 |CSE006| Expression too complex | | |
 |CSE007| Return disposable value unused | | Same as `SE005` but tracks only `IDisposable` and `IAsyncDisposable` values |
 |CSE008| Return async result unused | | Same as `SE005` but tracks only `IAsyncResult` (`Task`, `ValueTask`) values |
+|CSE009| Task variable not awaited | | Check if task stored in a variable is awaited |
 
 
 ## Configuration

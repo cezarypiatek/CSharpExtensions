@@ -1,0 +1,16 @@
+﻿using System;
+using System.Threading.Tasks;
+
+namespace TestNamespace
+{
+    class SampleClass
+    {
+        public async Task Test()
+        {
+            var [|t1|] = Task.Delay(10);
+            await Task.Delay(10);
+            Console.WriteLine("Finish");
+            await t1;
+        }
+    }
+}

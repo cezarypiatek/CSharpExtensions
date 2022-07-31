@@ -1,0 +1,22 @@
+﻿using System;
+using System.Threading.Tasks;
+
+namespace TestNamespace
+{
+    class SampleClass
+    {
+        public async Task Test()
+        {
+            var [|arr|] = new []
+            {
+                Task.Delay(10),
+                Task.Delay(20)
+            }
+            await Task.Delay(20);
+            Console.WriteLine("Finish");
+        }
+
+        private static Task<int> CalculateAsync() => throw null;
+        private static void Swallow(Task<int> a) => throw null;
+    }
+}
