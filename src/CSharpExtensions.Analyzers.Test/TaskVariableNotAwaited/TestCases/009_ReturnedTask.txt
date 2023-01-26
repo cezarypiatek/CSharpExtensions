@@ -1,0 +1,22 @@
+﻿using System;
+using System.Threading.Tasks;
+
+namespace TestNamespace
+{
+    class SampleClass
+    {
+        public Task Test()
+        {
+            var [|t2|] = CalculateAsync();
+            if(DateTime.Now.IsDaylightSavingTime())
+            {
+                 return t2;
+            }
+            return Task.CompletedTask;
+        }
+
+
+        private static Task<int> CalculateAsync() => throw null;
+        private static void Swallow(Task<int> a) => throw null;
+    }
+}

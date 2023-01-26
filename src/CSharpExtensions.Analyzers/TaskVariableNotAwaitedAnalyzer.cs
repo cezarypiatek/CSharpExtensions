@@ -2,7 +2,11 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FindSymbols;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace CSharpExtensions.Analyzers
@@ -28,15 +32,23 @@ namespace CSharpExtensions.Analyzers
                             {
                                 foreach (var operation in input)
                                 {
+                                    if (operation == null)
+                                    {
+                                        continue;
+                                    }
+
                                     yield return operation;
+                                    
                                     foreach (var childOperation in EnumerateOperations(operation.Children))
                                     {
                                         yield return childOperation;
                                     }
                                 }
                             }
+                            
+                            var controlFlowGraph = actionContext.GetControlFlowGraph();
 
-                            foreach (var operation in EnumerateOperations(actionContext.GetControlFlowGraph().Blocks.SelectMany(c => c.Operations)))
+                            foreach (var operation in EnumerateOperations(controlFlowGraph.Blocks.SelectMany(c => c.Operations.Add(c.BranchValue))))
                             {
                                 if (operation is ILocalReferenceOperation referenceOperation && referenceOperation.Local == variableDeclaratorOperation.Symbol)
                                 {
