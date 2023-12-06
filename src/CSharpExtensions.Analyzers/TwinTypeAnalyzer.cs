@@ -31,8 +31,8 @@ namespace CSharpExtensions.Analyzers
                     var missingMembers = twinType.GetMissingMembersFor(namedType);
                     if (missingMembers.Count > 0)
                     {
-                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => namedType.TypeKind == TypeKind.Enum
-                            ? $"- {x.ExpectedName} with value {x.ConstantValue}"
+                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => x.IsEnumWithValue
+                            ? $"- {x.ExpectedName} with value {x.EnumConstantValue}"
                             : $"- {x.ExpectedName}"));
                         var properties = new Dictionary<string, string>()
                         {

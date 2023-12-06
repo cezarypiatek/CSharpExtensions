@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CSharpExtensions.Analyzers
 {
@@ -31,12 +31,12 @@ namespace CSharpExtensions.Analyzers
     {
         public static bool IsMarkedWithAttribute(ISymbol type, string attributeName)
         {
-            return type.GetAttributes().Any(x =>  x.AttributeClass.ToDisplayString() == attributeName);
+            return type.GetAttributes().Any(x => x.AttributeClass.ToDisplayString() == attributeName);
         }
 
         public static IEnumerable<TwinTypeInfo> GetTwinTypes(ITypeSymbol type)
         {
-            foreach(var twinAttribute in type.GetAttributes().Where(x => x.AttributeClass.Name == "TwinTypeAttribute"))
+            foreach (var twinAttribute in type.GetAttributes().Where(x => x.AttributeClass.Name == "TwinTypeAttribute"))
             {
                 var parameter = twinAttribute.ConstructorArguments.FirstOrDefault();
                 if (parameter.Value is INamedTypeSymbol twinType)
@@ -53,7 +53,7 @@ namespace CSharpExtensions.Analyzers
 
         private static string TryGetNamePrefix(AttributeData twinAttribute)
         {
-            return twinAttribute.NamedArguments.FirstOrDefault(x=>x.Key == "NamePrefix").Value.Value?.ToString();
+            return twinAttribute.NamedArguments.FirstOrDefault(x => x.Key == "NamePrefix").Value.Value?.ToString();
         }
 
         private static string[] GetIgnoredMembers(AttributeData twinAttribute)
@@ -62,7 +62,7 @@ namespace CSharpExtensions.Analyzers
 
             if (ignoredMembersInfo.Value is TypedConstant value && value.Kind == TypedConstantKind.Array)
             {
-               return value.Values.Select(x => x.Value.ToString()).ToArray();
+                return value.Values.Select(x => x.Value.ToString()).ToArray();
             }
 
             return Array.Empty<string>();
@@ -110,14 +110,20 @@ namespace CSharpExtensions.Analyzers
     {
         public ISymbol Symbol { get; }
         public string ExpectedName { get; }
-        public object ConstantValue { get; }
+        public bool IsEnumWithValue { get; }
+        public object EnumConstantValue { get; }
 
 
         public MemberSymbolInfo(ISymbol symbol, string namePrefix)
         {
             Symbol = symbol;
             ExpectedName = namePrefix + symbol.Name;
-            ConstantValue = symbol is IFieldSymbol f ? f.ConstantValue : null;
+
+            if (symbol is IFieldSymbol ff && ff.DeclaringSyntaxReferences[0].GetSyntax() is EnumMemberDeclarationSyntax e)
+            {
+                IsEnumWithValue = e.EqualsValue != null;
+                EnumConstantValue = ff.ConstantValue;
+            }
         }
 
         protected bool Equals(MemberSymbolInfo other)
@@ -125,7 +131,7 @@ namespace CSharpExtensions.Analyzers
             // For enums we want to make sure the constant has the same value.
             if (Symbol is IFieldSymbol f && f.ContainingType.TypeKind == TypeKind.Enum)
             {
-                return Equals(ExpectedName, other?.ExpectedName) && Equals(ConstantValue, other?.ConstantValue);
+                return Equals(ExpectedName, other?.ExpectedName) && Equals(EnumConstantValue, other?.EnumConstantValue);
             }
             return Equals(ExpectedName, other?.ExpectedName);
         }
@@ -135,7 +141,7 @@ namespace CSharpExtensions.Analyzers
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((MemberSymbolInfo) obj);
+            return Equals((MemberSymbolInfo)obj);
         }
 
         public override int GetHashCode()
