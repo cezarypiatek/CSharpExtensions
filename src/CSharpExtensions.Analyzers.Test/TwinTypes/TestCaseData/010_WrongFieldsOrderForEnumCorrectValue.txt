@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SmartAnalyzers.CSharpExtensions.Annotations;
+
+namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+{
+
+    [TwinType(typeof(SampleTwinOrderEnumCorrectValue))]
+    public enum SampleOrderEnumCorrectValue
+    {
+        Option3 = 13,
+        Option2 = 12,
+        Option1 = 11
+    }
+    
+    public enum SampleTwinOrderEnumCorrectValue
+    {
+        Option1 = 11,
+        Option2 = 12,
+        Option3 = 13
+    }
+}

@@ -71,7 +71,8 @@ namespace CSharpExtensions.Analyzers
             var twinMembers = twinTypeInfo.GetTwinMembersFor(namedType);
             foreach (var twinMember in twinMembers)
             {
-                var enumMember = (EnumMemberDeclarationSyntax)syntaxGenerator.EnumMember(twinMember.Symbol.Name).WithAdditionalAnnotations(Formatter.Annotation);
+                var valueNode = syntaxGenerator.LiteralExpression(twinMember.ConstantValue);
+                var enumMember = (EnumMemberDeclarationSyntax)syntaxGenerator.EnumMember(twinMember.Symbol.Name, valueNode).WithAdditionalAnnotations(Formatter.Annotation);
                 members.Add(enumMember);
             }
             var newMembers = SyntaxFactory.SeparatedList(members);

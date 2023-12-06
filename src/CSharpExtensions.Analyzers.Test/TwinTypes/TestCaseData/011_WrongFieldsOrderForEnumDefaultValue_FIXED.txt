@@ -6,15 +6,15 @@ using SmartAnalyzers.CSharpExtensions.Annotations;
 namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
 {
 
-    [TwinType(typeof(SampleTwinOrderEnum))]
-    public enum [|SampleOrderEnum|]
+    [TwinType(typeof(SampleTwinOrderEnumDefaultValue))]
+    public enum SampleOrderEnumDefaultValue
     {
-        Option3,
+        Option1,
         Option2,
-        Option1
+        Option3
     }
     
-    public enum SampleTwinOrderEnum
+    public enum SampleTwinOrderEnumDefaultValue
     {
         Option1,
         Option2,
