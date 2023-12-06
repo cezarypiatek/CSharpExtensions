@@ -81,8 +81,15 @@ namespace CSharpExtensions.Analyzers
             var memberExtractor = new MembersExtractor(namedType);
 
             var ownMembers = GetMembers(memberExtractor, namedType);
-            var twinMembers = GetMembers(memberExtractor, this.Type, NamePrefix).Where(x=> IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
+            var twinMembers = GetMembers(memberExtractor, this.Type, NamePrefix).Where(x => IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
             return twinMembers.Except(ownMembers).ToList();
+        }
+
+        public IReadOnlyList<MemberSymbolInfo> GetTwinMembersFor(INamedTypeSymbol namedType)
+        {
+            var memberExtractor = new MembersExtractor(namedType);
+            var twinMembers = GetMembers(memberExtractor, this.Type, NamePrefix).Where(x => IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
+            return twinMembers.ToList();
         }
 
         private static IReadOnlyList<MemberSymbolInfo> GetMembers(MembersExtractor membersExtractor, ITypeSymbol namedType, string namePrefix = null)

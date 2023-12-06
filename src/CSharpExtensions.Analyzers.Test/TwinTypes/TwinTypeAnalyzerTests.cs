@@ -90,7 +90,13 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         {
             TestCodeFix(TwinTypeAnalyzerTestsTestCases._009_MissingFieldsForEnum, TwinTypeAnalyzerTestsTestCases._009_MissingFieldsForEnum_FIXED, TwinTypeAnalyzer.DiagnosticId);
         }
-        
+
+        [Test]
+        public void should_add_correct_fields_order_for_enum()
+        {
+            TestCodeFix(TwinTypeAnalyzerTestsTestCases._010_WrongFieldsOrderForEnum, TwinTypeAnalyzerTestsTestCases._010_WrongFieldsOrderForEnum_FIXED, TwinTypeAnalyzer.DiagnosticId);
+        }
+
         [Test]
         public void should_add_missing_properties_with_prefix()
         {

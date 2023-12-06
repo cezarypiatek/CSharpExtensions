@@ -432,5 +432,37 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
                 return ResourceManager.GetString("_010_WrongFieldsOrderForEnum", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(SampleTwinOrderEnum))]
+        ///    public enum [SampleOrderEnum]
+        ///    {
+        ///        Option1,
+        ///        Option2,
+        ///        Option3
+        ///    }
+        ///    
+        ///    public enum SampleTwinOrderEnum
+        ///    {
+        ///        Option1,
+        ///        Option2,
+        ///        Option3
+        ///    }
+        ///}
+        ///.
+        /// </summary>
+        internal static string _010_WrongFieldsOrderForEnum_FIXED {
+            get {
+                return ResourceManager.GetString("_010_WrongFieldsOrderForEnum_FIXED", resourceCulture);
+            }
+        }
     }
 }
