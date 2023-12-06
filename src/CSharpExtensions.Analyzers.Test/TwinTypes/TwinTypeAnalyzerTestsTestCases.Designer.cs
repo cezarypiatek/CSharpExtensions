@@ -410,26 +410,23 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
         ///
-        ///    [TwinType(typeof(SampleTwinOrderEnum))]
-        ///    public enum [|SampleOrderEnum|]
+        ///    [TwinType(typeof(SampleTwinOrderEnumCorrectValue))]
+        ///    public enum SampleOrderEnumCorrectValue
         ///    {
-        ///        Option1,
-        ///        Option2,
-        ///        Option3
+        ///        Option3 = 13,
+        ///        Option2 = 12,
+        ///        Option1 = 11
         ///    }
         ///    
-        ///    public enum SampleTwinOrderEnum
+        ///    public enum SampleTwinOrderEnumCorrectValue
         ///    {
-        ///        Option1,
-        ///        Option2,
-        ///        Option3
-        ///    }
-        ///}
-        ///.
+        ///        Option1 = 11,
+        ///        Option2 = 12,
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string _010_WrongFieldsOrderForEnum {
+        internal static string _010_WrongFieldsOrderForEnumCorrectValue {
             get {
-                return ResourceManager.GetString("_010_WrongFieldsOrderForEnum", resourceCulture);
+                return ResourceManager.GetString("_010_WrongFieldsOrderForEnumCorrectValue", resourceCulture);
             }
         }
         
@@ -442,15 +439,45 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
         ///{
         ///
-        ///    [TwinType(typeof(SampleTwinOrderEnum))]
-        ///    public enum [SampleOrderEnum]
+        ///    [TwinType(typeof(SampleTwinOrderEnumDefaultValue))]
+        ///    public enum [|SampleOrderEnumDefaultValue|]
+        ///    {
+        ///        Option3,
+        ///        Option2,
+        ///        Option1
+        ///    }
+        ///    
+        ///    public enum SampleTwinOrderEnumDefaultValue
+        ///    {
+        ///        Option1,
+        ///        Option2,
+        ///        Option3
+        ///    }        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _011_WrongFieldsOrderForEnumDefaultValue {
+            get {
+                return ResourceManager.GetString("_011_WrongFieldsOrderForEnumDefaultValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(SampleTwinOrderEnumDefaultValue))]
+        ///    public enum SampleOrderEnumDefaultValue
         ///    {
         ///        Option1,
         ///        Option2,
         ///        Option3
         ///    }
         ///    
-        ///    public enum SampleTwinOrderEnum
+        ///    public enum SampleTwinOrderEnumDefaultValue
         ///    {
         ///        Option1,
         ///        Option2,
@@ -459,9 +486,67 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///}
         ///.
         /// </summary>
-        internal static string _010_WrongFieldsOrderForEnum_FIXED {
+        internal static string _011_WrongFieldsOrderForEnumDefaultValue_FIXED {
             get {
-                return ResourceManager.GetString("_010_WrongFieldsOrderForEnum_FIXED", resourceCulture);
+                return ResourceManager.GetString("_011_WrongFieldsOrderForEnumDefaultValue_FIXED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(SampleTwinOrderEnumWrongValue))]
+        ///    public enum [|SampleOrderEnumWrongValue|]
+        ///    {
+        ///        Option1 = 13,
+        ///        Option2 = 12,
+        ///        Option3 = 11
+        ///    }
+        ///    
+        ///    public enum SampleTwinOrderEnumWrongValue
+        ///    {
+        ///        Option1 = 11,
+        ///        Option2 = 12,
+        ///     [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _012_WrongFieldsOrderForEnumWrongValue {
+            get {
+                return ResourceManager.GetString("_012_WrongFieldsOrderForEnumWrongValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(SampleTwinOrderEnumWrongValue))]
+        ///    public enum SampleOrderEnumWrongValue
+        ///    {
+        ///        Option1 = 11,
+        ///        Option2 = 12,
+        ///        Option3 = 13
+        ///    }
+        ///    
+        ///    public enum SampleTwinOrderEnumWrongValue
+        ///    {
+        ///        Option1 = 11,
+        ///        Option2 = 12,
+        ///         [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _012_WrongFieldsOrderForEnumWrongValue_FIXED {
+            get {
+                return ResourceManager.GetString("_012_WrongFieldsOrderForEnumWrongValue_FIXED", resourceCulture);
             }
         }
     }

@@ -41,9 +41,21 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         }
 
         [Test]
-        public void should_report_wrong_fields_order_for_enum()
+        public void should_not_report_wrong_fields_order_for_enum_with_correct_value()
         {
-            HasDiagnostic(TwinTypeAnalyzerTestsTestCases._010_WrongFieldsOrderForEnum, TwinTypeAnalyzer.DiagnosticId);
+            NoDiagnostic(TwinTypeAnalyzerTestsTestCases._010_WrongFieldsOrderForEnumCorrectValue, TwinTypeAnalyzer.DiagnosticId);
+        }
+
+        [Test]
+        public void should_report_wrong_fields_order_for_enum_with_default_value()
+        {
+            HasDiagnostic(TwinTypeAnalyzerTestsTestCases._011_WrongFieldsOrderForEnumDefaultValue, TwinTypeAnalyzer.DiagnosticId);
+        }
+
+        [Test]
+        public void should_report_wrong_fields_order_for_enum_with_wrong_value()
+        {
+            HasDiagnostic(TwinTypeAnalyzerTestsTestCases._012_WrongFieldsOrderForEnumWrongValue, TwinTypeAnalyzer.DiagnosticId);
         }
 
         [Test]
@@ -92,9 +104,15 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         }
 
         [Test]
-        public void should_add_correct_fields_order_for_enum()
+        public void should_add_correct_fields_order_for_enum_default_value()
         {
-            TestCodeFix(TwinTypeAnalyzerTestsTestCases._010_WrongFieldsOrderForEnum, TwinTypeAnalyzerTestsTestCases._010_WrongFieldsOrderForEnum_FIXED, TwinTypeAnalyzer.DiagnosticId);
+            TestCodeFix(TwinTypeAnalyzerTestsTestCases._011_WrongFieldsOrderForEnumDefaultValue, TwinTypeAnalyzerTestsTestCases._011_WrongFieldsOrderForEnumDefaultValue_FIXED, TwinTypeAnalyzer.DiagnosticId);
+        }
+
+        [Test]
+        public void should_report_wrong_fields_order_for_enum_with_wrong_value()
+        {
+            TestCodeFix(TwinTypeAnalyzerTestsTestCases._012_WrongFieldsOrderForEnumWrongValue, TwinTypeAnalyzerTestsTestCases._012_WrongFieldsOrderForEnumWrongValue_FIXED, TwinTypeAnalyzer.DiagnosticId);
         }
 
         [Test]

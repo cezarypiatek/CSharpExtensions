@@ -157,10 +157,19 @@
   <data name="_009_MissingFieldsForEnum_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>TestCaseData\009_MissingFieldsForEnum_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="_010_WrongFieldsOrderForEnum" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\010_WrongFieldsOrderForEnum.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="_010_WrongFieldsOrderForEnumCorrectValue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\010_WrongFieldsOrderForEnumCorrectValue.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="_010_WrongFieldsOrderForEnum_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>TestCaseData\010_WrongFieldsOrderForEnum_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="_011_WrongFieldsOrderForEnumDefaultValue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\011_WrongFieldsOrderForEnumDefaultValue.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_011_WrongFieldsOrderForEnumDefaultValue_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\011_WrongFieldsOrderForEnumDefaultValue_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_012_WrongFieldsOrderForEnumWrongValue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\012_WrongFieldsOrderForEnumWrongValue.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="_012_WrongFieldsOrderForEnumWrongValue_FIXED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TestCaseData\012_WrongFieldsOrderForEnumWrongValue_FIXED.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>
