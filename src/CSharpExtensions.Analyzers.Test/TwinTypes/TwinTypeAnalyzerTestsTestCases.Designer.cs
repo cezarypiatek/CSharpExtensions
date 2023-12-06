@@ -379,9 +379,11 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         ///{
         ///
         ///    [TwinType(typeof(SampleTwinEnum))]
-        ///    public enum [|SampleEnum|]
+        ///    public enum SampleEnum
         ///    {
-        ///        Option1
+        ///        Option1,
+        ///        Option2,
+        ///        Option3
         ///    }
         ///    
         ///    public enum SampleTwinEnum
@@ -396,6 +398,38 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes {
         internal static string _009_MissingFieldsForEnum_FIXED {
             get {
                 return ResourceManager.GetString("_009_MissingFieldsForEnum_FIXED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Text;
+        ///using SmartAnalyzers.CSharpExtensions.Annotations;
+        ///
+        ///namespace CSharpExtensions.Analyzers.Test.RequiredPropertiesInitialization.TestCaseData
+        ///{
+        ///
+        ///    [TwinType(typeof(SampleTwinOrderEnum))]
+        ///    public enum [|SampleOrderEnum|]
+        ///    {
+        ///        Option1,
+        ///        Option2,
+        ///        Option3
+        ///    }
+        ///    
+        ///    public enum SampleTwinOrderEnum
+        ///    {
+        ///        Option1,
+        ///        Option2,
+        ///        Option3
+        ///    }
+        ///}
+        ///.
+        /// </summary>
+        internal static string _010_WrongFieldsOrderForEnum {
+            get {
+                return ResourceManager.GetString("_010_WrongFieldsOrderForEnum", resourceCulture);
             }
         }
     }
