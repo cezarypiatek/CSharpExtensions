@@ -94,7 +94,7 @@ namespace CSharpExtensions.Analyzers
                     IFieldSymbol field when namedType.TypeKind != TypeKind.Enum => field.IsImplicitlyDeclared == false && field.IsStatic == false,
                     _ => false
                 })
-                .Select(x =>new MemberSymbolInfo(x, namePrefix))
+                .Select(x => new MemberSymbolInfo(x, namePrefix))
                 .ToList();
         }
     }
@@ -103,16 +103,23 @@ namespace CSharpExtensions.Analyzers
     {
         public ISymbol Symbol { get; }
         public string ExpectedName { get; }
+        public object ConstantValue { get; }
 
 
         public MemberSymbolInfo(ISymbol symbol, string namePrefix)
         {
             Symbol = symbol;
             ExpectedName = namePrefix + symbol.Name;
+            ConstantValue = symbol is IFieldSymbol f ? f.ConstantValue : null;
         }
 
         protected bool Equals(MemberSymbolInfo other)
         {
+            // For enums we want to make sure the constant has the same value.
+            if (Symbol is IFieldSymbol f && f.ContainingType.TypeKind == TypeKind.Enum)
+            {
+                return Equals(ExpectedName, other?.ExpectedName) && Equals(ConstantValue, other?.ConstantValue);
+            }
             return Equals(ExpectedName, other?.ExpectedName);
         }
 

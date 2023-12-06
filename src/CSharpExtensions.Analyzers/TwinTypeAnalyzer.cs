@@ -13,7 +13,7 @@ namespace CSharpExtensions.Analyzers
 
         private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, "Type should have the same fields as twin type", "Missing fields from {0}:\r\n{1}", "CSharp Extensions", DiagnosticSeverity.Error, isEnabledByDefault: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }  = ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -24,20 +24,22 @@ namespace CSharpExtensions.Analyzers
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if(context.Symbol is INamedTypeSymbol namedType && (namedType.TypeKind == TypeKind.Class || namedType.TypeKind == TypeKind.Struct || namedType.TypeKind == TypeKind.Enum))
+            if (context.Symbol is INamedTypeSymbol namedType && (namedType.TypeKind == TypeKind.Class || namedType.TypeKind == TypeKind.Struct || namedType.TypeKind == TypeKind.Enum))
             {
                 foreach (var twinType in SymbolHelper.GetTwinTypes(namedType))
                 {
                     var missingMembers = twinType.GetMissingMembersFor(namedType);
                     if (missingMembers.Count > 0)
                     {
-                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => $"- {x.ExpectedName}"));
+                        var propertiesString = string.Join("\r\n", missingMembers.Select(x => namedType.TypeKind == TypeKind.Enum
+                            ? $"- {x.ExpectedName} with value {x.ConstantValue}"
+                            : $"- {x.ExpectedName}"));
                         var properties = new Dictionary<string, string>()
                         {
                             ["TwinType"] = twinType.Type.ToDisplayString()
                         };
-                        var diagnostic = Diagnostic.Create(Rule, context.Symbol.Locations[0], properties.ToImmutableDictionary() ,twinType.Type.ToDisplayString(), propertiesString);
-                        
+                        var diagnostic = Diagnostic.Create(Rule, context.Symbol.Locations[0], properties.ToImmutableDictionary(), twinType.Type.ToDisplayString(), propertiesString);
+
                         context.ReportDiagnostic(diagnostic);
                     }
                 }

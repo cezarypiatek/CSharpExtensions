@@ -10,7 +10,7 @@ using SmartAnalyzers.CSharpExtensions.Annotations;
 
 namespace CSharpExtensions.Analyzers.Test.TwinTypes
 {
-    public class TwinTypeAnalyzerTests :  AnalyzerTestFixture
+    public class TwinTypeAnalyzerTests : AnalyzerTestFixture
     {
         protected override string LanguageName { get; } = LanguageNames.CSharp;
         protected override DiagnosticAnalyzer CreateAnalyzer() => new TwinTypeAnalyzer();
@@ -27,13 +27,13 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         {
             HasDiagnostic(TwinTypeAnalyzerTestsTestCases._001_MissingProperties, TwinTypeAnalyzer.DiagnosticId);
         }
-        
+
         [Test]
         public void should_report_missing_fields()
         {
             HasDiagnostic(TwinTypeAnalyzerTestsTestCases._002_MissingFields, TwinTypeAnalyzer.DiagnosticId);
         }
-        
+
         [Test]
         public void should_report_missing_fields_for_enum()
         {
@@ -41,17 +41,23 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         }
 
         [Test]
+        public void should_report_wrong_fields_order_for_enum()
+        {
+            HasDiagnostic(TwinTypeAnalyzerTestsTestCases._010_WrongFieldsOrderForEnum, TwinTypeAnalyzer.DiagnosticId);
+        }
+
+        [Test]
         public void should_report_missing_inherited_properties()
         {
             HasDiagnostic(TwinTypeAnalyzerTestsTestCases._003_MissingPropertiesFromInheritance, TwinTypeAnalyzer.DiagnosticId);
         }
-        
+
         [Test]
         public void should_not_report_missing_properties_if_all_types_has_the_same_members()
         {
             NoDiagnostic(TwinTypeAnalyzerTestsTestCases._004_NoMissingProperties, TwinTypeAnalyzer.DiagnosticId);
         }
-        
+
         [Test]
         public void should_not_report_prefixed_members_as_missing()
         {
@@ -60,7 +66,7 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
 
     }
 
-    public class TwinTypeCodeFixTests: CodeFixTestFixture
+    public class TwinTypeCodeFixTests : CodeFixTestFixture
     {
         protected override string LanguageName { get; } = LanguageNames.CSharp;
         protected override CodeFixProvider CreateProvider() => new AddMissingMembersOfTwinTypeCodeFixProvider();
@@ -78,7 +84,7 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         {
             TestCodeFix(TwinTypeAnalyzerTestsTestCases._005_MissingMembersForFIx, TwinTypeAnalyzerTestsTestCases._005_MissingMembersForFIx_FIXED, TwinTypeAnalyzer.DiagnosticId);
         }
-        
+
         [Test]
         public void should_add_missing_fields_for_enum()
         {
@@ -90,7 +96,7 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         {
             TestCodeFix(TwinTypeAnalyzerTestsTestCases._007_PropertiesWithPrefixForFix, TwinTypeAnalyzerTestsTestCases._007_PropertiesWithPrefixForFix_FIXED, TwinTypeAnalyzer.DiagnosticId);
         }
-        
+
         [Test]
         public void should_add_missing_properties_with_prefix_from_second_twin()
         {
