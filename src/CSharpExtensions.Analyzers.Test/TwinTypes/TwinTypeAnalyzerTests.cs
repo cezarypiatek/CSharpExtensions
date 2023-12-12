@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -12,9 +11,15 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
 {
     public class TwinTypeAnalyzerTests : AnalyzerTestFixture
     {
-        protected override string LanguageName { get; } = LanguageNames.CSharp;
-        protected override DiagnosticAnalyzer CreateAnalyzer() => new TwinTypeAnalyzer();
-
+        private bool _identicalEnum;
+        protected override string LanguageName => LanguageNames.CSharp;
+        protected override DiagnosticAnalyzer CreateAnalyzer() => new TwinTypeAnalyzer
+        {
+            DefaultSettings = new CSE003Settings
+            {
+                IdenticalEnum = _identicalEnum
+            }
+        };
         protected override IReadOnlyCollection<MetadataReference> References => new[]
         {
             ReferenceSource.FromType<TwinTypeAttribute>(),
@@ -49,12 +54,14 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         [Test]
         public void should_report_wrong_fields_order_for_enum_with_default_value()
         {
+            _identicalEnum = true;
             HasDiagnostic(TwinTypeAnalyzerTestsTestCases._011_WrongFieldsOrderForEnumDefaultValue, TwinTypeAnalyzer.DiagnosticId);
         }
 
         [Test]
         public void should_report_wrong_fields_order_for_enum_with_wrong_value()
         {
+            _identicalEnum = true;
             HasDiagnostic(TwinTypeAnalyzerTestsTestCases._012_WrongFieldsOrderForEnumWrongValue, TwinTypeAnalyzer.DiagnosticId);
         }
 
@@ -75,21 +82,37 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         {
             NoDiagnostic(TwinTypeAnalyzerTestsTestCases._006_PropertiesWithPrefix, TwinTypeAnalyzer.DiagnosticId);
         }
-
     }
 
     public class TwinTypeCodeFixTests : CodeFixTestFixture
     {
-        protected override string LanguageName { get; } = LanguageNames.CSharp;
-        protected override CodeFixProvider CreateProvider() => new AddMissingMembersOfTwinTypeCodeFixProvider();
-        protected override IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => new[] { new TwinTypeAnalyzer() };
+        private bool _identicalEnum;
+        protected override string LanguageName => LanguageNames.CSharp;
+        protected override CodeFixProvider CreateProvider() => new AddMissingMembersOfTwinTypeCodeFixProvider
+        {
+            DefaultSettings = new CSE003Settings
+            {
+                IdenticalEnum = _identicalEnum
+            }
+        };
+
+        protected override IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => new[]
+        {
+            new TwinTypeAnalyzer
+            {
+                DefaultSettings = new CSE003Settings
+                {
+                    IdenticalEnum = _identicalEnum
+                }
+            }
+        };
+
         protected override IReadOnlyCollection<MetadataReference> References => new[]
         {
             ReferenceSource.FromType<TwinTypeAttribute>(),
             MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.1.0.0").Location),
             MetadataReference.CreateFromFile(Assembly.Load("System.Runtime, Version=6.0.0.0").Location)
         };
-
 
         [Test]
         public void should_add_missing_properties_and_fields()
@@ -106,12 +129,14 @@ namespace CSharpExtensions.Analyzers.Test.TwinTypes
         [Test]
         public void should_add_correct_fields_order_for_enum_default_value()
         {
+            _identicalEnum = true;
             TestCodeFix(TwinTypeAnalyzerTestsTestCases._011_WrongFieldsOrderForEnumDefaultValue, TwinTypeAnalyzerTestsTestCases._011_WrongFieldsOrderForEnumDefaultValue_FIXED, TwinTypeAnalyzer.DiagnosticId);
         }
 
         [Test]
         public void should_report_wrong_fields_order_for_enum_with_wrong_value()
         {
+            _identicalEnum = true;
             TestCodeFix(TwinTypeAnalyzerTestsTestCases._012_WrongFieldsOrderForEnumWrongValue, TwinTypeAnalyzerTestsTestCases._012_WrongFieldsOrderForEnumWrongValue_FIXED, TwinTypeAnalyzer.DiagnosticId);
         }
 

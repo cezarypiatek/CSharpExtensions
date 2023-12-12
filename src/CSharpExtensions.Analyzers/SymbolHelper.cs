@@ -34,7 +34,7 @@ namespace CSharpExtensions.Analyzers
             return type.GetAttributes().Any(x => x.AttributeClass.ToDisplayString() == attributeName);
         }
 
-        public static IEnumerable<TwinTypeInfo> GetTwinTypes(ITypeSymbol type)
+        public static IEnumerable<TwinTypeInfo> GetTwinTypes(ITypeSymbol type, CSE003Settings config)
         {
             foreach (var twinAttribute in type.GetAttributes().Where(x => x.AttributeClass.Name == "TwinTypeAttribute"))
             {
@@ -45,7 +45,8 @@ namespace CSharpExtensions.Analyzers
                     {
                         Type = twinType,
                         IgnoredMembers = GetIgnoredMembers(twinAttribute),
-                        NamePrefix = TryGetNamePrefix(twinAttribute)
+                        NamePrefix = TryGetNamePrefix(twinAttribute),
+                        IdenticalEnum = config.IdenticalEnum
                     };
                 }
             }
@@ -73,26 +74,26 @@ namespace CSharpExtensions.Analyzers
     {
         public INamedTypeSymbol Type { get; set; }
         public string[] IgnoredMembers { get; set; }
-
         public string NamePrefix { get; set; }
+        public bool IdenticalEnum { get; set; }
 
         public IReadOnlyList<MemberSymbolInfo> GetMissingMembersFor(INamedTypeSymbol namedType)
         {
             var memberExtractor = new MembersExtractor(namedType);
 
-            var ownMembers = GetMembers(memberExtractor, namedType);
-            var twinMembers = GetMembers(memberExtractor, this.Type, NamePrefix).Where(x => IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
+            var ownMembers = GetMembers(memberExtractor, namedType, IdenticalEnum);
+            var twinMembers = GetMembers(memberExtractor, this.Type, IdenticalEnum, NamePrefix).Where(x => IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
             return twinMembers.Except(ownMembers).ToList();
         }
 
         public IReadOnlyList<MemberSymbolInfo> GetTwinMembersFor(INamedTypeSymbol namedType)
         {
             var memberExtractor = new MembersExtractor(namedType);
-            var twinMembers = GetMembers(memberExtractor, this.Type, NamePrefix).Where(x => IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
+            var twinMembers = GetMembers(memberExtractor, this.Type, IdenticalEnum, NamePrefix).Where(x => IgnoredMembers.Contains(x.Symbol.Name) == false).ToList();
             return twinMembers.ToList();
         }
 
-        private static IReadOnlyList<MemberSymbolInfo> GetMembers(MembersExtractor membersExtractor, ITypeSymbol namedType, string namePrefix = null)
+        private static IReadOnlyList<MemberSymbolInfo> GetMembers(MembersExtractor membersExtractor, ITypeSymbol namedType, bool identicalEnum, string namePrefix = null)
         {
             return membersExtractor.GetAllAccessibleMembers(namedType, x => x switch
                 {
@@ -101,7 +102,7 @@ namespace CSharpExtensions.Analyzers
                     IFieldSymbol field when namedType.TypeKind != TypeKind.Enum => field.IsImplicitlyDeclared == false && field.IsStatic == false,
                     _ => false
                 })
-                .Select(x => new MemberSymbolInfo(x, namePrefix))
+                .Select(x => new MemberSymbolInfo(x, identicalEnum, namePrefix))
                 .ToList();
         }
     }
@@ -112,14 +113,15 @@ namespace CSharpExtensions.Analyzers
         public string ExpectedName { get; }
         public bool IsEnumWithValue { get; }
         public object EnumConstantValue { get; }
+        public bool IdenticalEnum { get; }
 
-
-        public MemberSymbolInfo(ISymbol symbol, string namePrefix)
+        public MemberSymbolInfo(ISymbol symbol, bool identicalEnum, string namePrefix)
         {
             Symbol = symbol;
+            IdenticalEnum = identicalEnum;
             ExpectedName = namePrefix + symbol.Name;
 
-            if (symbol is IFieldSymbol ff && ff.DeclaringSyntaxReferences[0].GetSyntax() is EnumMemberDeclarationSyntax e)
+            if (IdenticalEnum && symbol is IFieldSymbol ff && ff.DeclaringSyntaxReferences[0].GetSyntax() is EnumMemberDeclarationSyntax e)
             {
                 IsEnumWithValue = e.EqualsValue != null;
                 EnumConstantValue = ff.ConstantValue;
@@ -129,7 +131,7 @@ namespace CSharpExtensions.Analyzers
         protected bool Equals(MemberSymbolInfo other)
         {
             // For enums we want to make sure the constant has the same value.
-            if (Symbol is IFieldSymbol f && f.ContainingType.TypeKind == TypeKind.Enum)
+            if (IdenticalEnum && Symbol is IFieldSymbol f && f.ContainingType.TypeKind == TypeKind.Enum)
             {
                 return Equals(ExpectedName, other?.ExpectedName) && Equals(EnumConstantValue, other?.EnumConstantValue);
             }
