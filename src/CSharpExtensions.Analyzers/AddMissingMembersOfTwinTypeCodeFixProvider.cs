@@ -16,15 +16,19 @@ namespace CSharpExtensions.Analyzers
     [ExportCodeFixProvider(LanguageNames.CSharp)]
     public class AddMissingMembersOfTwinTypeCodeFixProvider : CodeFixProvider
     {
+        public CSE003Settings DefaultSettings { get; set; }
+        
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var config = DefaultSettings ?? await context.Document.Project.GetConfigFor<CSE003Settings>(TwinTypeAnalyzer.DiagnosticId, context.CancellationToken);
+
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken);
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var typeDeclaration = root.FindNode(context.Span).FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
 
             if (typeDeclaration is { } && ModelExtensions.GetDeclaredSymbol(semanticModel, typeDeclaration) is INamedTypeSymbol namedType)
             {
-                var twinTypes = SymbolHelper.GetTwinTypes(namedType).GroupBy(x => x.Type.ToDisplayString())
+                var twinTypes = SymbolHelper.GetTwinTypes(namedType, config).GroupBy(x => x.Type.ToDisplayString())
                     .ToDictionary(x => x.Key, x => x.ToList());
 
                 foreach (var diagnostic in context.Diagnostics)
@@ -47,7 +51,7 @@ namespace CSharpExtensions.Analyzers
             }
         }
 
-        private async Task<Document> AddMissingMembers(Document contextDocument, INamedTypeSymbol namedType, BaseTypeDeclarationSyntax typeDeclaration, TwinTypeInfo twinTypeInfo, CancellationToken token)
+        private static Task<Document> AddMissingMembers(Document contextDocument, INamedTypeSymbol namedType, BaseTypeDeclarationSyntax typeDeclaration, TwinTypeInfo twinTypeInfo, CancellationToken token)
         {
             var syntaxGenerator = SyntaxGenerator.GetGenerator(contextDocument);
             var newType = typeDeclaration switch
@@ -56,7 +60,7 @@ namespace CSharpExtensions.Analyzers
                 EnumDeclarationSyntax ed => AddEnumMembers(ed, namedType, twinTypeInfo, syntaxGenerator),
                 _ => typeDeclaration
             };
-            return await ReplaceNodes(contextDocument, typeDeclaration, newType, token);
+            return ReplaceNodes(contextDocument, typeDeclaration, newType, token);
         }
 
         private static TypeDeclarationSyntax AddMembers(TypeDeclarationSyntax td, INamedTypeSymbol namedType, TwinTypeInfo twinTypeInfo, SyntaxGenerator syntaxGenerator)
@@ -67,19 +71,35 @@ namespace CSharpExtensions.Analyzers
 
         private static EnumDeclarationSyntax AddEnumMembers(EnumDeclarationSyntax ed, INamedTypeSymbol namedType, TwinTypeInfo twinTypeInfo, SyntaxGenerator syntaxGenerator)
         {
-            var members = new List<EnumMemberDeclarationSyntax>();
-            var twinMembers = twinTypeInfo.GetTwinMembersFor(namedType);
-            foreach (var twinMember in twinMembers)
+            if (twinTypeInfo.IdenticalEnum)
             {
-                SyntaxNode valueNode = twinMember.IsEnumWithValue ? syntaxGenerator.LiteralExpression(twinMember.EnumConstantValue) : null;
-                var enumMember = (EnumMemberDeclarationSyntax)syntaxGenerator.EnumMember(twinMember.Symbol.Name, valueNode).WithAdditionalAnnotations(Formatter.Annotation);
-                members.Add(enumMember);
+                var members = new List<EnumMemberDeclarationSyntax>();
+                var twinMembers = twinTypeInfo.GetTwinMembersFor(namedType);
+                foreach (var twinMember in twinMembers)
+                {
+                    var valueNode = twinMember.IsEnumWithValue ? syntaxGenerator.LiteralExpression(twinMember.EnumConstantValue) : null;
+                    var enumMember = (EnumMemberDeclarationSyntax)syntaxGenerator.EnumMember(twinMember.Symbol.Name, valueNode).WithAdditionalAnnotations(Formatter.Annotation);
+                    members.Add(enumMember);
+                }
+                var newMembers = SyntaxFactory.SeparatedList(members);
+                return ed.WithMembers(newMembers);
             }
-            var newMembers = SyntaxFactory.SeparatedList(members);
-            return ed.WithMembers(newMembers);
+            else
+            {
+                var members = new List<EnumMemberDeclarationSyntax>();
+                var missingMembers = twinTypeInfo.GetMissingMembersFor(namedType).OrderBy(x => x.Symbol.Name);
+                foreach (var missingMember in missingMembers)
+                {
+                    var valueNode = missingMember.IsEnumWithValue ? syntaxGenerator.LiteralExpression(missingMember.EnumConstantValue) : null;
+                    var enumMember = (EnumMemberDeclarationSyntax)syntaxGenerator.EnumMember(missingMember.Symbol.Name, valueNode).WithAdditionalAnnotations(Formatter.Annotation);
+                    members.Add(enumMember);
+                }
+                var newMembers = SyntaxFactory.SeparatedList(members).ToArray();
+                return ed.AddMembers(newMembers);
+            }
         }
 
-        public static async Task<Document> ReplaceNodes(Document document, SyntaxNode oldNode, SyntaxNode newNode, CancellationToken cancellationToken)
+        private static async Task<Document> ReplaceNodes(Document document, SyntaxNode oldNode, SyntaxNode newNode, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken);
             var newRoot = root.ReplaceNode(oldNode, newNode);
