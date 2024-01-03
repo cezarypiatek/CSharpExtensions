@@ -17,7 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SmartAnalyzers.RoslynTestKit" Version="4.1.2" />
+    <PackageReference Include="SmartAnalyzers.RoslynTestKit" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
