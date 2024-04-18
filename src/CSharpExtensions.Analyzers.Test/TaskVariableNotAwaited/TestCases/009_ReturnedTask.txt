@@ -7,7 +7,7 @@ namespace TestNamespace
     {
         public Task Test()
         {
-            var [|t2|] = CalculateAsync();
+            var [| t2 |] = CalculateAsync();
             if(DateTime.Now.IsDaylightSavingTime())
             {
                  return t2;

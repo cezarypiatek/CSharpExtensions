@@ -62,5 +62,11 @@ namespace CSharpExtensions.Analyzers.Test.TaskVariableNotAwaited
         {
             NoDiagnosticAtMarker(TaskVariableNotAwaiteTestCases._009_ReturnedTask,TaskVariableNotAwaitedAnalyzer.TaskVariableNotAwaitedDescriptor.Id);
         }
+        
+        [Test]
+        public void should_not_report_awaited_in_lambda()
+        {
+            NoDiagnosticAtMarker(TaskVariableNotAwaiteTestCases._010_Awaited_In_Lambda,TaskVariableNotAwaitedAnalyzer.TaskVariableNotAwaitedDescriptor.Id);
+        }
     }
 }

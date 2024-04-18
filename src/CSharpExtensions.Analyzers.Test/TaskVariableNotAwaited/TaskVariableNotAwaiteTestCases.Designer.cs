@@ -278,7 +278,7 @@ namespace CSharpExtensions.Analyzers.Test.TaskVariableNotAwaited {
         ///            var [|t2|] = CalculateAsync();
         ///            if(DateTime.Now.IsDaylightSavingTime())
         ///            {
-        ///                return t2;
+        ///                 return t2;
         ///            }
         ///            return Task.CompletedTask;
         ///        }
@@ -292,6 +292,36 @@ namespace CSharpExtensions.Analyzers.Test.TaskVariableNotAwaited {
         internal static string _009_ReturnedTask {
             get {
                 return ResourceManager.GetString("_009_ReturnedTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public Task Test()
+        ///        {
+        ///            var [|t2|] = CalculateAsync();
+        ///            if(DateTime.Now.IsDaylightSavingTime())
+        ///            {
+        ///                 return t2;
+        ///            }
+        ///            return Task.CompletedTask;
+        ///        }
+        ///
+        ///
+        ///        private static Task&lt;int&gt; CalculateAsync() =&gt; throw null;
+        ///        private static void Swallow(Task&lt;int&gt; a) =&gt; throw null;
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string _010_Awaited_In_Lambda {
+            get {
+                return ResourceManager.GetString("_010_Awaited_In_Lambda", resourceCulture);
             }
         }
     }

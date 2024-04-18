@@ -28,8 +28,11 @@ namespace CSharpExtensions.Analyzers
                         var variableType = variableDeclaratorOperation.Symbol.Type;
                         if (IsTask(variableType) || (variableType is IArrayTypeSymbol arrayTypeSymbol && IsTask(arrayTypeSymbol.ElementType)))
                         {
+                            var controlFlowGraph = actionContext.GetControlFlowGraph();
+
                             IEnumerable<IOperation> EnumerateOperations(IEnumerable<IOperation> input)
                             {
+                                
                                 foreach (var operation in input)
                                 {
                                     if (operation == null)
@@ -38,15 +41,21 @@ namespace CSharpExtensions.Analyzers
                                     }
 
                                     yield return operation;
-                                    
+
+                                    if (operation is IFlowAnonymousFunctionOperation lambdaOperation)
+                                    {
+                                       var lambdaFlow =  controlFlowGraph.GetAnonymousFunctionControlFlowGraph(lambdaOperation);
+                                       foreach (var lambdaSubOperation in EnumerateOperations(lambdaFlow.Blocks.SelectMany(c => c.Operations.Add(c.BranchValue))))
+                                       {
+                                           yield return lambdaSubOperation;
+                                       }
+                                    }
                                     foreach (var childOperation in EnumerateOperations(operation.Children))
                                     {
                                         yield return childOperation;
                                     }
                                 }
                             }
-                            
-                            var controlFlowGraph = actionContext.GetControlFlowGraph();
 
                             foreach (var operation in EnumerateOperations(controlFlowGraph.Blocks.SelectMany(c => c.Operations.Add(c.BranchValue))))
                             {
