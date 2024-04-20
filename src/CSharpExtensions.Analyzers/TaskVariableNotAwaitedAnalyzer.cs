@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -28,9 +29,7 @@ namespace CSharpExtensions.Analyzers
                         var variableType = variableDeclaratorOperation.Symbol.Type;
                         if (IsTask(variableType) || (variableType is IArrayTypeSymbol arrayTypeSymbol && IsTask(arrayTypeSymbol.ElementType)))
                         {
-                            var controlFlowGraph = actionContext.GetControlFlowGraph();
-
-                            IEnumerable<IOperation> EnumerateOperations(IEnumerable<IOperation> input)
+                            IEnumerable<IOperation> EnumerateOperations(IEnumerable<IOperation> input, ControlFlowGraph currentControlFlowGraph)
                             {
                                 
                                 foreach (var operation in input)
@@ -44,20 +43,25 @@ namespace CSharpExtensions.Analyzers
 
                                     if (operation is IFlowAnonymousFunctionOperation lambdaOperation)
                                     {
-                                       var lambdaFlow =  controlFlowGraph.GetAnonymousFunctionControlFlowGraph(lambdaOperation);
-                                       foreach (var lambdaSubOperation in EnumerateOperations(lambdaFlow.Blocks.SelectMany(c => c.Operations.Add(c.BranchValue))))
+                                       var lambdaFlow = currentControlFlowGraph.GetAnonymousFunctionControlFlowGraph(lambdaOperation);
+                                       if (lambdaFlow != null)
                                        {
-                                           yield return lambdaSubOperation;
+                                           foreach (var lambdaSubOperation in EnumerateOperations(lambdaFlow.Blocks.SelectMany(c => c.Operations.Add(c.BranchValue)), lambdaFlow))
+                                           {
+                                               yield return lambdaSubOperation;
+                                           }
                                        }
                                     }
-                                    foreach (var childOperation in EnumerateOperations(operation.Children))
+                                    foreach (var childOperation in EnumerateOperations(operation.Children, currentControlFlowGraph))
                                     {
                                         yield return childOperation;
                                     }
                                 }
                             }
 
-                            foreach (var operation in EnumerateOperations(controlFlowGraph.Blocks.SelectMany(c => c.Operations.Add(c.BranchValue))))
+                            var controlFlowGraph = actionContext.GetControlFlowGraph();
+
+                            foreach (var operation in EnumerateOperations(controlFlowGraph.Blocks.SelectMany(c => c.Operations.Add(c.BranchValue)), controlFlowGraph))
                             {
                                 if (operation is ILocalReferenceOperation referenceOperation && referenceOperation.Local == variableDeclaratorOperation.Symbol)
                                 {
@@ -84,6 +88,11 @@ namespace CSharpExtensions.Analyzers
                 },
                 operationKinds: OperationKind.VariableDeclarator
             );
+        }
+
+        private static ControlFlowGraph GetControlFlow(ControlFlowGraph context, IFlowAnonymousFunctionOperation lambdaOperation)
+        {
+            return context.GetAnonymousFunctionControlFlowGraph(lambdaOperation);
         }
 
         private static bool IsTask(ITypeSymbol variableType)
