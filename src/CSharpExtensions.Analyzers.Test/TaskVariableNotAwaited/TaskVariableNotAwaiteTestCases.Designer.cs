@@ -275,7 +275,7 @@ namespace CSharpExtensions.Analyzers.Test.TaskVariableNotAwaited {
         ///    {
         ///        public Task Test()
         ///        {
-        ///            var [|t2|] = CalculateAsync();
+        ///            var [| t2 |] = CalculateAsync();
         ///            if(DateTime.Now.IsDaylightSavingTime())
         ///            {
         ///                 return t2;
@@ -303,25 +303,55 @@ namespace CSharpExtensions.Analyzers.Test.TaskVariableNotAwaited {
         ///{
         ///    class SampleClass
         ///    {
-        ///        public Task Test()
+        ///        public async Task Test()
         ///        {
-        ///            var [|t2|] = CalculateAsync();
-        ///            if(DateTime.Now.IsDaylightSavingTime())
+        ///            var [|t2|]  = CalculateAsync();
+        ///            await Step(async () =&gt;
         ///            {
-        ///                 return t2;
-        ///            }
-        ///            return Task.CompletedTask;
+        ///                await Step(async () =&gt;
+        ///                {
+        ///                    await t2;
+        ///                });
+        ///            });
+        ///            
         ///        }
         ///
-        ///
         ///        private static Task&lt;int&gt; CalculateAsync() =&gt; throw null;
-        ///        private static void Swallow(Task&lt;int&gt; a) =&gt; throw null;
-        ///    }
-        ///}.
+        ///        private static Task Step(Func&lt;Task&gt;  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _010_Awaited_In_Lambda {
             get {
                 return ResourceManager.GetString("_010_Awaited_In_Lambda", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace TestNamespace
+        ///{
+        ///    class SampleClass
+        ///    {
+        ///        public async Task Test()
+        ///        {
+        ///            var [|t2|]  = CalculateAsync();
+        ///            await Step(async () =&gt;
+        ///            {
+        ///                await t2;
+        ///            });
+        ///            
+        ///        }
+        ///
+        ///
+        ///        private static Task&lt;int&gt; CalculateAsync() =&gt; throw null;
+        ///        private static Task Step(Func&lt;Task&gt; func) =&gt; throw null;
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string _011_Awaited_In_nested_lambda {
+            get {
+                return ResourceManager.GetString("_011_Awaited_In_nested_lambda", resourceCulture);
             }
         }
     }
